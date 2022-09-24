@@ -28,7 +28,8 @@ class VK_data:
             'count': 15,
             'fields': 'bdate'
         }
-        friends = requests.get(url=self.friends_get_url, params={**self.params, **json_params}).json()['response']['items']
+        friends = requests.get(url=self.friends_get_url,
+                               params={**self.params, **json_params}).json()['response']['items']
         friends_age_list = [datetime.now().year - datetime.strptime(item['bdate'], "%d.%m.%Y").year
                             for item in friends if 'bdate' in item if len(item['bdate']) >= 8]
         average_age = int(sum(friends_age_list) / len(friends_age_list))
@@ -42,7 +43,8 @@ class VK_data:
             'user_ids': user_ids,
             'fields': 'bdate, city, sex'
         }
-        user_data = requests.get(url=self.users_get_url, params={**self.params, **json_params}).json()['response'][0]
+        user_data = requests.get(url=self.users_get_url,
+                                 params={**self.params, **json_params}).json()['response'][0]
         sex = user_data['sex']
         if sex == 1:
             sex = 2
@@ -107,5 +109,5 @@ if __name__ == '__main__':
     # pprint(my_data.get_photos(265887656))
     # pprint(my_data.get_photos(328892096))
 
-    pprint(my_data.get_suitable(my_data.get_user_data(265887656)))
-    # pprint(my_data.get_suitable(my_data.get_user_data(328892096)))
+    # pprint(my_data.get_suitable(my_data.get_user_data(265887656)))
+    pprint(my_data.get_suitable(my_data.get_user_data(328892096)))
