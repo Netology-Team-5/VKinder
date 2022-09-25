@@ -66,8 +66,7 @@ class VK_data:
         json_params = {
             'owner_id': owner_id,
             'album_id': 'profile',
-            'extended': 1,
-            'photo_sizes': 1
+            'extended': 1
         }
         try:
             photos_json = requests.get(self.photos_get_url,
@@ -76,7 +75,9 @@ class VK_data:
             pass
         else:
             photos = [(item['likes']['count'], f"photo{item['owner_id']}_{item['id']}") for item in photos_json]
-            return photos[0][1]
+            photos = sorted(photos, reverse=True)
+            photos = [item[1] for item in photos][0:3]
+            return photos
 
     def get_suitable(self, user_id):
         """ Сбор информации по подходящим людям:
