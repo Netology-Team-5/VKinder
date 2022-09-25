@@ -55,7 +55,7 @@ for event in longpoll.listen():
                 result_search = VK_data(token_program).get_suitable(str(event.user_id))
                 result_user = result_search[randrange(0, len(result_search))]
                 write_msg(event.user_id, f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}', keyboard.get_keyboard())
-                write_msg(event.user_id, ','.join(VK_data(token_program).get_photos(str(event.user_id))), keyboard.get_keyboard())
+                paste_foto(event.user_id, VK_data(token_program).get_photos(str(result_user[2])), keyboard.get_keyboard())
             elif request == "В избранное":
                 # вызывается функция добавления пользователя программы в user
                 # вызывается функция добавления контакта в избранное и связи пользователя и контакта из таблицы

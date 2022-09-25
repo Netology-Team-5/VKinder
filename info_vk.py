@@ -75,10 +75,8 @@ class VK_data:
         except KeyError:
             pass
         else:
-            photos = [(item['likes']['count'],
-                       item['owner_id'],
-                       item['id']) for item in photos_json]
-            return photos
+            photos = [(item['likes']['count'], f"photo{item['owner_id']}_{item['id']}") for item in photos_json]
+            return photos[0][1]
 
     def get_suitable(self, user_id):
         """ Сбор информации по подходящим людям:
