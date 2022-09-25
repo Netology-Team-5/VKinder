@@ -9,7 +9,7 @@ class VK_data:
     friends_get_url = 'https://api.vk.com/method/friends.get'
     photos_get_url = 'https://api.vk.com/method/photos.get'
 
-    def __init__(self):
+    def __init__(self, vk_token):
         """ vk_token - мой токен от stand_alone приложения
          из предыдущей курсовой"""
 
@@ -60,7 +60,8 @@ class VK_data:
             age = self.average_friends_age(user_ids)
         age_from = age - 5
         age_to = age + 5
-        return {'sex': sex, 'age_from': age_from, 'age_to': age_to, 'city': city}
+        my_params = {'sex': sex, 'age_from': age_from, 'age_to': age_to, 'city': city}
+        return my_params
 
     def get_photos(self, owner_id):
         json_params = {
@@ -92,17 +93,18 @@ class VK_data:
             if item['is_friend'] == 0:
                 first_name = item['first_name']
                 last_name = item['last_name']
-                photo_info = my_data.get_photos(item['id'])
-                user_info.append((first_name, last_name, photo_info))
+                user_link = item['id']
+                photo_info = self.get_photos(item['id'])
+                user_info.append((first_name, last_name, user_link, photo_info))
         return user_info
 
 
-with open('vk_token.txt') as file:
-    vk_token = file.read()
+# with open('vk_token.txt') as file:
+#     vk_token = file.read()
+#
+# my_data = VK_data()
 
-my_data = VK_data()
-
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # pprint(my_data.get_user_data(265887656))
     # pprint(my_data.get_user_data(328892096))
 
@@ -110,4 +112,4 @@ if __name__ == '__main__':
     # pprint(my_data.get_photos(328892096))
 
     # pprint(my_data.get_suitable(my_data.get_user_data(265887656)))
-    pprint(my_data.get_suitable(my_data.get_user_data(328892096)))
+    # pprint(my_data.get_suitable(my_data.get_user_data(328892096)))
