@@ -57,8 +57,8 @@ class VK_data:
                 age = self.average_friends_age(user_ids)
         else:
             age = self.average_friends_age(user_ids)
-        age_from = age - 5
-        age_to = age + 5
+        age_from = age - 10
+        age_to = age + 0
         my_params = {'sex': sex, 'age_from': age_from, 'age_to': age_to, 'city': city}
         return my_params
 
@@ -84,7 +84,8 @@ class VK_data:
         Имя, Фамилия, урлы фотографий и лайки к ним """
 
         json_params = {
-            'fields': 'is_friend'
+            'count': 500,
+            'fields': 'is_friend, is_closed, has_photo'
         }
         users = requests.get(url=self.users_search_url,
                              params={**self.params,
@@ -92,7 +93,7 @@ class VK_data:
                                      **VK_data(token_program).get_user_data(user_id)}).json()['response']['items']
         user_info = []
         for item in users:
-            if item['is_friend'] == 0:
+            if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] == False:
                 first_name = item['first_name']
                 last_name = item['last_name']
                 user_link = item['id']
@@ -108,8 +109,8 @@ if __name__ == '__main__':
     # pprint(my_data.get_user_data(265887656))
     # pprint(my_data.get_user_data(328892096))
 
-    pprint(VK_data(token_program).get_photos(265887656))
+    # pprint(VK_data(token_program).get_photos(39291361))
     # pprint(VK_data(token_program).get_photos(328892096))
 
-    # pprint(VK_data(token_program).get_suitable(265887656))
+    pprint(VK_data(token_program).get_suitable(265887656))
     # pprint(VK_data(token_program).get_suitable(328892096))
