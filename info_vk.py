@@ -94,8 +94,7 @@ class VK_data:
                 first_name = item['first_name']
                 last_name = item['last_name']
                 user_link = item['id']
-                photo_info = self.get_photos(item['id'])
-                user_info.append((first_name, last_name, user_link, photo_info))
+                user_info.append((first_name, last_name, user_link))
         return user_info
 
 
