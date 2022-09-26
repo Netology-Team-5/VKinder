@@ -109,8 +109,8 @@ if __name__ == '__main__':
     # pprint(my_data.get_user_data(265887656))
     # pprint(my_data.get_user_data(328892096))
 
-    # pprint(VK_data(token_program).get_photos(39291361))
+    pprint(VK_data(token_program).get_photos(328892096))
     # pprint(VK_data(token_program).get_photos(328892096))
 
-    pprint(VK_data(token_program).get_suitable(265887656))
+    # pprint(VK_data(token_program).get_suitable(265887656))
     # pprint(VK_data(token_program).get_suitable(328892096))
