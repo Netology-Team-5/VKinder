@@ -43,8 +43,8 @@ if __name__ == '__main__':
     # # 4. Функция, позволяющая добавить в избранные новую запись.
     # # def favorites(name, surname, profile_url, photo_1_url, photo_2_url, photo_3_url)
     #
-    new_db.favorites('Регина', 'Плеханова', 'https://vk.com/regina_msk', 'photo100172_166443618,photo100172_166443618,photo100172_166443618')
-    # new_db.favorites('Диана', 'Сухорукова', 'https://vk.com/id41347328', 'https://vk.com/id41347328?z=photo41347328_457245753%2Falbum41347328_0%2Frev')
+    # new_db.favorites('Регина', 'Плеханова', 'https://vk.com/regina_msk', 'photo100172_166443618,photo100172_166443618,photo100172_166443618')
+    new_db.favorites('Диана', 'Сухорукова', 'https://vk.com/id41347328', 'https://vk.com/id41347328?z=photo41347328_457245753%2Falbum41347328_0%2Frev')
 
     # # 5. Функция, позволяющая добавить связать запись в избранных с юзером.
     # # def fav_user(vk_user_id, fav_id)

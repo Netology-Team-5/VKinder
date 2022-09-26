@@ -59,7 +59,7 @@ for event in longpoll.listen():
                 photos = VK_data(token_program).get_photos(str(result_user[2]))
                 write_msg(event.user_id,
                           f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}', keyboard.get_keyboard())
-                paste_foto(event.user_id, photos[:], keyboard.get_keyboard())
+                paste_foto(event.user_id, photos, keyboard.get_keyboard())
             elif request == "В избранное":
                 vk_db.favorites(result_user[0], result_user[1], f'https://vk.com/id{result_user[2]}', photos)
                 # вызывается функция добавления контакта в избранное и связи пользователя и контакта из таблицы
