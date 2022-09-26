@@ -19,7 +19,6 @@ user_password = config["Database"]["user_password"]
 
 vk_db = DatabaseConfig(db_name, user_name, user_password)
 
-
 vk_enter = vk_api.VkApi(token=vk_api_token)
 vk = vk_enter.get_api()
 longpoll = VkLongPoll(vk_enter)
