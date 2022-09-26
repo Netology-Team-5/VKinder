@@ -23,8 +23,6 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
-
-
     def new_vk_user(self, age, gender, city):
         # 2. Функция, позволяющая добавить нового юзера
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
@@ -33,12 +31,12 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
-    def vk_user_editor(self, age, gender, city, id):
+    def vk_user_editor(self, age, gender, city, user_id):
         # 3. Функция, позволяющая изменить данные о юзере
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute("""UPDATE vk_user SET age = %s, gender = %s, city = %s WHERE id = %s;""",
-                        (age, gender, city, id))
+                        (age, gender, city, user_id))
             conn.commit()
         conn.close()
 

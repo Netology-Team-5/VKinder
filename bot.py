@@ -4,16 +4,20 @@ from random import randrange
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from info_vk import VK_data
+from VKinder_db_engine import DatabaseConfig
 
 config = configparser.ConfigParser()
+
 config.read("tokens.ini")
 vk_api_token = config['TOKEN_BOT']['token']
-
-# get_token_vk() - это получение токена через селениум
-# token_program = get_token_vk()
-
-# config['TOKEN_SEARCH']['token'] - для известного токена
 token_program = config['TOKEN_SEARCH']['token']
+
+config.read("settings.ini")
+db_name = config["Database"]["db_name"]
+user_name = config["Database"]["user_name"]
+user_password = config["Database"]["user_password"]
+
+vk_db = DatabaseConfig(db_name, user_name, user_password)
 
 vk_enter = vk_api.VkApi(token=vk_api_token)
 vk = vk_enter.get_api()
@@ -35,9 +39,10 @@ def paste_foto(user_id, attachment, *keyboard):
     vk.messages.send(keyboard=keyboard, user_id=user_id, attachment=attachment, random_id=randrange(10 ** 9))
 
 
+result_user = None
+photos = None
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW:
-
         if event.to_me:
             request = event.text
             user_info = vk.users.get(user_ids=event.user_id, fields='sex, bdate, city')
@@ -51,11 +56,12 @@ for event in longpoll.listen():
             elif request in ("Поиск", 'да', "Следующий", 'еще'):
                 result_search = VK_data(token_program).get_suitable(str(event.user_id))
                 result_user = result_search[randrange(0, len(result_search))]
+                photos = VK_data(token_program).get_photos(str(result_user[2]))
                 write_msg(event.user_id,
                           f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}', keyboard.get_keyboard())
-                paste_foto(event.user_id, VK_data(token_program).get_photos(str(result_user[2])), keyboard.get_keyboard())
+                paste_foto(event.user_id, photos, keyboard.get_keyboard())
             elif request == "В избранное":
-                # вызывается функция добавления пользователя программы в user
+                vk_db.favorites(result_user[0], result_user[1], f'https://vk.com/id{result_user[2]}', photos)
                 # вызывается функция добавления контакта в избранное и связи пользователя и контакта из таблицы
                 write_msg(event.user_id, "Добавлено!", keyboard.get_keyboard())
             elif request == "Показать избранное":
