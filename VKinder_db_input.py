@@ -20,9 +20,9 @@ if __name__ == '__main__':
     # new_db.table_removal('favorites')
 
 
-    # # 1. Функция, создающая таблицы БД:
-    # # def table_creation(table_name, table_columns)
-    #
+    # 1. Функция, создающая таблицы БД:
+    # def table_creation(table_name, table_columns)
+
     # new_db.table_creation('vk_user', 'id SERIAL PRIMARY KEY, age INTEGER NOT NULL, gender VARCHAR(7) NOT NULL, city VARCHAR(40) NOT NULL')
     # new_db.table_creation('favorites', 'id SERIAL PRIMARY KEY, name VARCHAR(50), surname VARCHAR(50), profile_url VARCHAR(100) UNIQUE NOT NULL, photos VARCHAR(100)')
     # new_db.table_creation('user_favorites', 'id SERIAL PRIMARY KEY, vk_user_id INTEGER NOT NULL REFERENCES vk_user(id), fav_id INTEGER NOT NULL REFERENCES favorites(id)')
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     # # def favorites(name, surname, profile_url, photo_1_url, photo_2_url, photo_3_url)
     #
     # new_db.favorites('Регина', 'Плеханова', 'https://vk.com/regina_msk', 'photo100172_166443618,photo100172_166443618,photo100172_166443618')
-    new_db.favorites('Диана', 'Сухорукова', 'https://vk.com/id41347328', 'https://vk.com/id41347328?z=photo41347328_457245753%2Falbum41347328_0%2Frev')
+    # new_db.favorites('Диана', 'Сухорукова', 'https://vk.com/id41347328', 'https://vk.com/id41347328?z=photo41347328_457245753%2Falbum41347328_0%2Frev')
 
     # # 5. Функция, позволяющая добавить связать запись в избранных с юзером.
     # # def fav_user(vk_user_id, fav_id)

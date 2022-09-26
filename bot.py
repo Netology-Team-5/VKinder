@@ -12,7 +12,7 @@ config.read("tokens.ini")
 vk_api_token = config['TOKEN_BOT']['token']
 token_program = config['TOKEN_SEARCH']['token']
 
-config.read("settings.ini")
+config.read("base_settings.ini")
 db_name = config["Database"]["db_name"]
 user_name = config["Database"]["user_name"]
 user_password = config["Database"]["user_password"]
