@@ -2,7 +2,7 @@ import configparser
 from VKinder_db_engine import DatabaseConfig
 
 config = configparser.ConfigParser()
-config.read("settings.ini")
+config.read("base_settings.ini")
 
 db_name = config["Database"]["db_name"]
 user_name = config["Database"]["user_name"]
