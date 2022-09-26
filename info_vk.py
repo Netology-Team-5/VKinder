@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+import configparser
 from pprint import pprint
 
 
@@ -10,8 +11,6 @@ class VK_data:
     photos_get_url = 'https://api.vk.com/method/photos.get'
 
     def __init__(self, vk_token):
-        """ vk_token - мой токен от stand_alone приложения
-         из предыдущей курсовой"""
 
         self.params = {
             'access_token': vk_token,
@@ -58,8 +57,8 @@ class VK_data:
                 age = self.average_friends_age(user_ids)
         else:
             age = self.average_friends_age(user_ids)
-        age_from = age - 5
-        age_to = age + 5
+        age_from = age - 10
+        age_to = age + 0
         my_params = {'sex': sex, 'age_from': age_from, 'age_to': age_to, 'city': city}
         return my_params
 
@@ -67,8 +66,7 @@ class VK_data:
         json_params = {
             'owner_id': owner_id,
             'album_id': 'profile',
-            'extended': 1,
-            'photo_sizes': 1
+            'extended': 1
         }
         try:
             photos_json = requests.get(self.photos_get_url,
@@ -76,21 +74,26 @@ class VK_data:
         except KeyError:
             pass
         else:
-            photos = [(item['likes']['count'], item['sizes'][-1]['url']) for item in photos_json]
+            photos = [(item['likes']['count'], f"photo{item['owner_id']}_{item['id']}") for item in photos_json]
+            photos = sorted(photos, reverse=True)
+            photos = [item[1] for item in photos][:3]
             return photos
 
-    def get_suitable(self, my_params):
+    def get_suitable(self, user_id):
         """ Сбор информации по подходящим людям:
         Имя, Фамилия, урлы фотографий и лайки к ним """
 
         json_params = {
-            'fields': 'is_friend'
+            'count': 500,
+            'fields': 'is_friend, is_closed, has_photo'
         }
         users = requests.get(url=self.users_search_url,
-                             params={**self.params, **json_params, **my_params}).json()['response']['items']
+                             params={**self.params,
+                                     **json_params,
+                                     **VK_data(token_program).get_user_data(user_id)}).json()['response']['items']
         user_info = []
         for item in users:
-            if item['is_friend'] == 0:
+            if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] == False:
                 first_name = item['first_name']
                 last_name = item['last_name']
                 user_link = item['id']
@@ -98,17 +101,16 @@ class VK_data:
         return user_info
 
 
-# with open('vk_token.txt') as file:
-#     vk_token = file.read()
-#
-# my_data = VK_data()
+config = configparser.ConfigParser()
+config.read("tokens.ini")
+token_program = config['TOKEN_SEARCH']['token']
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
     # pprint(my_data.get_user_data(265887656))
     # pprint(my_data.get_user_data(328892096))
 
-    # pprint(my_data.get_photos(265887656))
-    # pprint(my_data.get_photos(328892096))
+    # pprint(VK_data(token_program).get_photos(39291361))
+    # pprint(VK_data(token_program).get_photos(328892096))
 
-    # pprint(my_data.get_suitable(my_data.get_user_data(265887656)))
-    # pprint(my_data.get_suitable(my_data.get_user_data(328892096)))
+    pprint(VK_data(token_program).get_suitable(265887656))
+    # pprint(VK_data(token_program).get_suitable(328892096))
