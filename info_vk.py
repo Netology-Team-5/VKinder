@@ -76,7 +76,7 @@ class VK_data:
         else:
             photos = [(item['likes']['count'], f"photo{item['owner_id']}_{item['id']}") for item in photos_json]
             photos = sorted(photos, reverse=True)
-            photos = [item[1] for item in photos][0:3]
+            photos = [item[1] for item in photos][:3]
             return photos
 
     def get_suitable(self, user_id):
@@ -109,8 +109,8 @@ if __name__ == '__main__':
     # pprint(my_data.get_user_data(265887656))
     # pprint(my_data.get_user_data(328892096))
 
-    pprint(VK_data(token_program).get_photos(328892096))
+    # pprint(VK_data(token_program).get_photos(39291361))
     # pprint(VK_data(token_program).get_photos(328892096))
 
-    # pprint(VK_data(token_program).get_suitable(265887656))
+    pprint(VK_data(token_program).get_suitable(265887656))
     # pprint(VK_data(token_program).get_suitable(328892096))
