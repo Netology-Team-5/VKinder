@@ -76,7 +76,7 @@ class VK_data:
         else:
             photos = [(item['likes']['count'], f"photo{item['owner_id']}_{item['id']}") for item in photos_json]
             photos = sorted(photos, reverse=True)
-            photos = [item[1] for item in photos][0:3]
+            photos = [item[1] for item in photos][:3]
             return photos
 
     def get_suitable(self, user_id):
