@@ -46,7 +46,7 @@ user_info = None
 for event in longpoll.listen():
     user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
     vk_db.new_vk_user(event.user_id,
-                      (date.today().year - int(user_info['bdate'][-4:])), user_info['sex'], user_info['city']['id'])
+                      int(date.today().year - int(user_info['bdate'][-4:])), user_info['sex'], user_info['city']['id'])
     if event.type == VkEventType.MESSAGE_NEW:
         if event.to_me:
             request = event.text

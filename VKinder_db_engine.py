@@ -27,7 +27,7 @@ class DatabaseConfig:
         # 2. Функция, позволяющая добавить нового юзера
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
-            cur.execute("""INSERT INTO vk_user(id, user_id_in_vk, age, gender, city) VALUES (%s, %s, %s, %s);""",
+            cur.execute("""INSERT INTO vk_user(user_id_in_vk, age, gender, city) VALUES (%s, %s, %s, %s);""",
                         (id, vk_user_id, age, gender, city))
             conn.commit()
         conn.close()
