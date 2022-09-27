@@ -1,5 +1,6 @@
 import configparser
 import vk_api
+import time
 from random import randrange
 from datetime import date
 from psycopg2 import errors as err
@@ -67,22 +68,33 @@ for event in longpoll.listen():
                 result_user = result_search[randrange(0, len(result_search))]
                 photos = ','.join(VK_data(token_program).get_photos(str(result_user[2])))
                 write_msg(event.user_id,
-                          f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}', keyboard.get_keyboard())
+                          f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}',
+                          keyboard.get_keyboard())
                 paste_foto(event.user_id, photos, keyboard.get_keyboard())
             elif request == "В избранное":
                 try:
-                    vk_db.favorites(result_user[2], result_user[0], result_user[1], f'https://vk.com/id{result_user[2]}', str(photos))
-                    vk_db.fav_user(event.user_id, result_user[2])
-                except err.UniqueViolation:
-                    pass
-                write_msg(event.user_id, "Добавлено!", keyboard.get_keyboard())
+                    try:
+                        vk_db.favorites(result_user[2], result_user[0], result_user[1],
+                                        f'https://vk.com/id{result_user[2]}', str(photos))
+                        vk_db.fav_user(event.user_id, result_user[2])
+                    except err.UniqueViolation:
+                        pass
+                    write_msg(event.user_id, "Добавлено!", keyboard.get_keyboard())
+                except TypeError:
+                    write_msg(event.user_id, 'Сначала нужно выбрать человека. Нажмите "Поиск"', keyboard.get_keyboard())
             elif request == "Показать избранное":
                 list_of_fav = vk_db.get_fav_users(event.user_id)
                 # вызывает функцию, которая дает список избранных
+                count = 0
                 for fav in list_of_fav:
-                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard.get_keyboard())
-                    photos = fav[3]
-                    list_p = photos
-                    paste_foto(event.user_id, f'{photos}', keyboard.get_keyboard())
+                    if count < 10:
+                        write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard.get_keyboard())
+                        paste_foto(event.user_id, fav[3], keyboard.get_keyboard())
+                        count += 1
+                    else:
+                        time.sleep(1)
+                        write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard.get_keyboard())
+                        paste_foto(event.user_id, fav[3], keyboard.get_keyboard())
+                        count = 0
             else:
                 write_msg(event.user_id, "Не поняла вашего ответа...", keyboard.get_keyboard())

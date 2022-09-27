@@ -27,7 +27,8 @@ class DatabaseConfig:
         # 2. Функция, позволяющая добавить нового юзера
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
-            cur.execute("""INSERT INTO vk_user(user_id_in_vk, age, gender, city) VALUES (%s, %s, %s, %s);""", (user_id_in_vk, age, gender, city))
+            cur.execute("""INSERT INTO vk_user(user_id_in_vk, age, gender, city) VALUES (%s, %s, %s, %s);""",
+                        (user_id_in_vk, age, gender, city))
             conn.commit()
         conn.close()
 
@@ -45,7 +46,8 @@ class DatabaseConfig:
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute(
-                """INSERT INTO favorites(vk_user_id, name, surname, profile_url, photos) VALUES (%s, %s, %s, %s, %s);""",
+                """INSERT INTO favorites(vk_user_id, name, surname, profile_url, photos) 
+                VALUES (%s, %s, %s, %s, %s);""",
                 (vk_user_id, name, surname, profile_url, photos))
             conn.commit()
         conn.close()
@@ -54,7 +56,8 @@ class DatabaseConfig:
         # 5. Функция, позволяющая добавить новую запись в избранные юзера.
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
-            cur.execute("""INSERT INTO user_favorites(user_id_in_vk, fav_id) VALUES (%s, %s);""", (user_id_in_vk, fav_id))
+            cur.execute("""INSERT INTO user_favorites(user_id_in_vk, fav_id) VALUES (%s, %s);""",
+                        (user_id_in_vk, fav_id))
             conn.commit()
         conn.close()
 
@@ -67,7 +70,7 @@ class DatabaseConfig:
                 LEFT JOIN favorites f ON uf.fav_id = f.vk_user_id
                 WHERE user_id_in_vk = %s;       
             """, (user_id_in_vk,))
-            return (cur.fetchall())
+            return cur.fetchall()
 
     def vk_user_removal(self, table, id):
         # 7. Функция, позволяющая удалить запись из таблицы по id

@@ -89,12 +89,13 @@ class VK_data:
             while len(all_photos_json_list) < count_all_photos:
                 json_params['offset'] += 50
                 new_array_photos = (requests.get(self.photos_get_url,
-                                           params={**self.params, **json_params}).json()['response'])['items']
+                                                 params={**self.params, **json_params}).json()['response'])['items']
                 all_photos_json_list += new_array_photos
         except KeyError:
             pass
         else:
-            photos = [(item['likes']['count'], f"photo{item['owner_id']}_{item['id']}") for item in all_photos_json_list]
+            photos = [(item['likes']['count'], f"photo{item['owner_id']}_{item['id']}")
+                      for item in all_photos_json_list]
             photos = sorted(photos, reverse=True)
             photos = [item[1] for item in photos][:3]
             return photos
@@ -107,13 +108,11 @@ class VK_data:
             'count': 500,
             'fields': 'is_friend, is_closed, has_photo'
         }
-        users = requests.get(url=self.users_search_url,
-                             params={**self.params,
-                                     **json_params,
-                                     **VK_data(token_program).get_user_data_for_search(user_id)}).json()['response']['items']
+        users = requests.get(url=self.users_search_url, params={**self.params, **json_params, **VK_data(token_program).
+                             get_user_data_for_search(user_id)}).json()['response']['items']
         user_info = []
         for item in users:
-            if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] == False:
+            if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] is False:
                 first_name = item['first_name']
                 last_name = item['last_name']
                 user_link = item['id']
