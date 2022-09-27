@@ -4,6 +4,11 @@ import configparser
 from pprint import pprint
 
 
+config = configparser.ConfigParser()
+config.read("tokens.ini")
+token_program = config['TOKEN_SEARCH']['token']
+
+
 class VK_data:
     users_get_url = 'https://api.vk.com/method/users.get'
     users_search_url = 'https://api.vk.com/method/users.search'
@@ -97,18 +102,17 @@ class VK_data:
             'birth_month': 1
         }
 
-        code = 'return API.({"q":"Nature","count":3})users.search({"user_ids": API.photos.search({"q":"Beatles", "count":3}).items@.owner_id})@.last_name;'
-        thirteen_thousand_users = [];
-        month = 1;
-        while (month < 13)
-            {API.users.search({"fields":"is_friend,is_closed,has_photo","birth_month":month, },
-            'birth_month': 1}) users = requests.get(url=self.users_search_url,
+        searcher_data = VK_data(token_program).get_user_data(user_id)
+        thirteen_thousand_users = []
+        month = 1
+        while month < 13:
+            users = requests.get(url=self.users_search_url,
                                  params={**self.params,
                                          **json_params,
-                                         **VK_data(token_program).get_user_data(user_id)}).json()['response']['items']
+                                         **searcher_data}).json()['response']['items']
             json_params['birth_month'] += 1
             thirteen_thousand_users += users
-            thirteen_thousand_users = requests.get(url='https://api.vk.com/method/execute', params=code)
+            month += 1
         user_info = []
         for item in thirteen_thousand_users:
             if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] == False:
@@ -117,11 +121,6 @@ class VK_data:
                 user_link = item['id']
                 user_info.append((first_name, last_name, user_link))
         return user_info
-
-
-config = configparser.ConfigParser()
-config.read("tokens.ini")
-token_program = config['TOKEN_SEARCH']['token']
 
 if __name__ == '__main__':
     # pprint(my_data.get_user_data(265887656))

@@ -7,7 +7,7 @@ from info_vk import VK_data
 
 config = configparser.ConfigParser()
 config.read("tokens.ini")
-vk_api_token = config['TOKEN_BOT']['token']
+vk_api_token = config['TOKEN_BOT']['token_my']
 
 # get_token_vk() - это получение токена через селениум
 # token_program = get_token_vk()
@@ -34,6 +34,7 @@ def write_msg(user_id, message, *keyboard):
 def paste_foto(user_id, attachment, *keyboard):
     vk.messages.send(keyboard=keyboard, user_id=user_id, attachment=attachment, random_id=randrange(10 ** 9))
 
+result_search = None
 
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW:
@@ -48,12 +49,21 @@ for event in longpoll.listen():
                           keyboard.get_keyboard())
             elif request == "пока":
                 write_msg(event.user_id, "Пока((")
-            elif request in ("Поиск", 'да', "Следующий", 'еще'):
+            elif request in ("Поиск", 'да'):
                 result_search = VK_data(token_program).get_suitable(str(event.user_id))
+                write_msg(event.user_id, f"{user_info[0]['first_name']}, я нашел для вас {len(result_search)} кандидатов(ок)\nВот один/одна из них:", keyboard.get_keyboard())
                 result_user = result_search[randrange(0, len(result_search))]
                 write_msg(event.user_id,
                           f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}', keyboard.get_keyboard())
                 paste_foto(event.user_id, VK_data(token_program).get_photos(str(result_user[2])), keyboard.get_keyboard())
+            elif request in ("Следующий", 'еще'):
+                try:
+                    result_user = result_search[randrange(0, len(result_search))]
+                    write_msg(event.user_id,
+                              f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}', keyboard.get_keyboard())
+                    paste_foto(event.user_id, VK_data(token_program).get_photos(str(result_user[2])), keyboard.get_keyboard())
+                except TypeError:
+                    write_msg(event.user_id, 'Чтобы выбирать следующего, сначала нажмите "Поиск"', keyboard.get_keyboard())
             elif request == "В избранное":
                 # вызывается функция добавления пользователя программы в user
                 # вызывается функция добавления контакта в избранное и связи пользователя и контакта из таблицы
