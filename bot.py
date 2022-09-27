@@ -1,6 +1,7 @@
 import configparser
 import vk_api
 from random import randrange
+from datetime import date
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from info_vk import VK_data
@@ -41,15 +42,20 @@ def paste_foto(user_id, attachment, *keyboard):
 
 result_user = None
 photos = None
+user_info = None
 for event in longpoll.listen():
+    user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
+    vk_db.new_vk_user(event.user_id,
+                      (date.today().year - int(user_info['bdate'][-4:])), user_info['sex'], user_info['city']['id'])
     if event.type == VkEventType.MESSAGE_NEW:
         if event.to_me:
             request = event.text
-            user_info = vk.users.get(user_ids=event.user_id, fields='sex, bdate, city')
-
+            # user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
+            # vk_db.new_vk_user(event.user_id,
+            #                   (date.today().year - int(user_info['bdate'][-4:])), user_info['sex'], user_info['city']['id'])
             if request in ("Привет", 'привет', "хай", 'Йоу'):
                 write_msg(event.user_id,
-                          f"Привет, {user_info[0]['first_name']}!\n Хочешь с кем-нибудь познакомиться?",
+                          f"Привет, {user_info['first_name']}!\n Хочешь с кем-нибудь познакомиться?",
                           keyboard.get_keyboard())
             elif request == "пока":
                 write_msg(event.user_id, "Пока((")

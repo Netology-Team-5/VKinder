@@ -34,7 +34,19 @@ class VK_data:
         average_age = int(sum(friends_age_list) / len(friends_age_list))
         return average_age
 
-    def get_user_data(self, user_ids):
+    def get_user_data_only(self, user_ids):
+        """ Формирование параметров для поиска. Если не указана дата рождения,
+        то возраст рассчитывается как ср арифм возростов друзей """
+
+        json_params = {
+            'user_ids': user_ids,
+            'fields': 'bdate, city, sex'
+        }
+        user_data = requests.get(url=self.users_get_url,
+                                 params={**self.params, **json_params}).json()['response'][0]
+        return user_data
+
+    def get_user_data_for_search(self, user_ids):
         """ Формирование параметров для поиска. Если не указана дата рождения,
         то возраст рассчитывается как ср арифм возростов друзей """
 
@@ -98,7 +110,7 @@ class VK_data:
         users = requests.get(url=self.users_search_url,
                              params={**self.params,
                                      **json_params,
-                                     **VK_data(token_program).get_user_data(user_id)}).json()['response']['items']
+                                     **VK_data(token_program).get_user_data_for_search(user_id)}).json()['response']['items']
         user_info = []
         for item in users:
             if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] == False:
@@ -121,4 +133,5 @@ if __name__ == '__main__':
     # pprint(VK_data(token_program).get_photos(328892096))
 
     pprint(VK_data(token_program).get_photos(1058441))
+    pprint(VK_data(token_program).get_user_data_only(1058441))
     # pprint(VK_data(token_program).get_suitable(328892096))

@@ -12,8 +12,8 @@ new_db = DatabaseConfig(db_name, user_name, user_password)
 
 if __name__ == '__main__':
 
-    # # 0. Функция, удаляющая таблицы БД:
-    # # def table_removal(table_name)
+    # 0. Функция, удаляющая таблицы БД:
+    # def table_removal(table_name)
     #
     # new_db.table_removal('user_favorites')
     # new_db.table_removal('vk_user')
@@ -23,9 +23,9 @@ if __name__ == '__main__':
     # 1. Функция, создающая таблицы БД:
     # def table_creation(table_name, table_columns)
 
-    # new_db.table_creation('vk_user', 'id SERIAL PRIMARY KEY, age INTEGER NOT NULL, gender VARCHAR(7) NOT NULL, city VARCHAR(40) NOT NULL')
-    # new_db.table_creation('favorites', 'id SERIAL PRIMARY KEY, name VARCHAR(50), surname VARCHAR(50), profile_url VARCHAR(100) UNIQUE NOT NULL, photos VARCHAR(100)')
-    # new_db.table_creation('user_favorites', 'id SERIAL PRIMARY KEY, vk_user_id INTEGER NOT NULL REFERENCES vk_user(id), fav_id INTEGER NOT NULL REFERENCES favorites(id)')
+    new_db.table_creation('vk_user', 'id SERIAL PRIMARY KEY, user_id_in_vk INTEGER NOT NULL, age INTEGER NOT NULL, gender INTEGER NOT NULL, city INTEGER NOT NULL')
+    new_db.table_creation('favorites', 'id SERIAL PRIMARY KEY, name VARCHAR(50), surname VARCHAR(50), profile_url VARCHAR(100) UNIQUE NOT NULL, photos VARCHAR(100)')
+    new_db.table_creation('user_favorites', 'id SERIAL PRIMARY KEY, vk_user_id INTEGER NOT NULL REFERENCES vk_user(id), fav_id INTEGER NOT NULL REFERENCES favorites(id)')
 
 
     # # 2. Функция, позволяющая добавить нового юзера
