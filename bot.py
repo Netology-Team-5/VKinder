@@ -12,7 +12,7 @@ from VKinder_db_engine import DatabaseConfig
 config = configparser.ConfigParser()
 
 config.read("tokens.ini")
-vk_api_token = config['TOKEN_BOT']['token']
+vk_api_token = config['TOKEN_BOT']['token_my']
 token_program = config['TOKEN_SEARCH']['token']
 
 config.read("base_settings.ini")
@@ -41,7 +41,7 @@ def write_msg(user_id, message, *keyboard):
 def paste_foto(user_id, attachment, *keyboard):
     vk.messages.send(keyboard=keyboard, user_id=user_id, attachment=attachment, random_id=randrange(10 ** 9))
 
-
+result_search = None
 result_user = None
 photos = None
 user_info = None
@@ -55,23 +55,45 @@ for event in longpoll.listen():
         except err.UniqueViolation:
             pass
     if event.type == VkEventType.MESSAGE_NEW:
-        user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
+        if user_info is None:
+            user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
         if event.to_me:
             request = event.text
             if request in ("Привет", 'привет', "хай", 'Йоу'):
+                if user_info is not None:
+                    try:
+                        vk_db.new_vk_user(user_info['id'],
+                                          int(date.today().year - int(user_info['bdate'][-4:])), user_info['sex'],
+                                          user_info['city']['id'])
+                    except err.UniqueViolation:
+                        pass
                 write_msg(event.user_id,
                           f"Привет, {user_info['first_name']}!\n Хочешь с кем-нибудь познакомиться?",
                           keyboard.get_keyboard())
             elif request == "пока":
                 write_msg(event.user_id, "Пока((")
-            elif request in ("Поиск", 'да', "Следующий", 'еще'):
+            elif request in ("Поиск", 'да'):
                 result_search = VK_data(token_program).get_suitable(str(event.user_id))
+                write_msg(event.user_id, f"{user_info['first_name']}, я нашел для вас {len(result_search)} кандидатов(ок)\nВот один/одна из них:", keyboard.get_keyboard())
                 result_user = result_search[randrange(0, len(result_search))]
                 photos = ','.join(VK_data(token_program).get_photos(str(result_user[2])))
                 write_msg(event.user_id,
                           f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}',
                           keyboard.get_keyboard())
-                paste_foto(event.user_id, photos, keyboard.get_keyboard())
+                paste_foto(event.user_id, VK_data(token_program).get_photos(str(result_user[2])),
+                           keyboard.get_keyboard())
+            elif request in ("Следующий", 'еще'):
+                try:
+                    result_user = result_search[randrange(0, len(result_search))]
+                    write_msg(event.user_id,
+                              f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}',
+                              keyboard.get_keyboard())
+                    paste_foto(event.user_id, VK_data(token_program).get_photos(str(result_user[2])),
+                               keyboard.get_keyboard())
+                except TypeError:
+                    write_msg(event.user_id, 'Чтобы выбирать следующего, сначала нажмите "Поиск"',
+                              f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}',
+                              keyboard.get_keyboard())
             elif request == "В избранное":
                 try:
                     try:
@@ -82,11 +104,13 @@ for event in longpoll.listen():
                         pass
                     write_msg(event.user_id, "Добавлено!", keyboard.get_keyboard())
                 except TypeError:
-                    write_msg(event.user_id, 'Сначала нужно выбрать человека. Нажмите "Поиск"', keyboard.get_keyboard())
+                    write_msg(event.user_id, 'Сначала нужно выбрать человека. Нажмите "Поиск"',
+                              keyboard.get_keyboard())
             elif request == "Показать избранное":
                 list_of_fav = vk_db.get_fav_users(event.user_id)
                 count = 0
-                write_msg(event.user_id, f'Вашем списки "Избранное" {len(list_of_fav)} человек.\n Вот они:', keyboard.get_keyboard())
+                write_msg(event.user_id, f'Вашем списки "Избранное" {len(list_of_fav)} человек.\n Вот они:',
+                          keyboard.get_keyboard())
                 for fav in list_of_fav:
                     if count < 10:
                         write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard.get_keyboard())
@@ -98,4 +122,5 @@ for event in longpoll.listen():
                         paste_foto(event.user_id, fav[3], keyboard.get_keyboard())
                         count = 0
             else:
-                write_msg(event.user_id, "Не понял вашего запроса... Попробуйте команду на клавиатуре.", keyboard.get_keyboard())
+                write_msg(event.user_id, "Не понял вашего запроса... Попробуйте команду на клавиатуре.",
+                          keyboard.get_keyboard())

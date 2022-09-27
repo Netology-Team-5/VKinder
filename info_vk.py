@@ -4,6 +4,11 @@ import configparser
 from pprint import pprint
 
 
+config = configparser.ConfigParser()
+config.read("tokens.ini")
+token_program = config['TOKEN_SEARCH']['token']
+
+
 class VK_data:
     users_get_url = 'https://api.vk.com/method/users.get'
     users_search_url = 'https://api.vk.com/method/users.search'
@@ -105,24 +110,30 @@ class VK_data:
         Имя, Фамилия, урлы фотографий и лайки к ним """
 
         json_params = {
-            'count': 500,
-            'fields': 'is_friend, is_closed, has_photo'
+            'count': 1000,
+            'fields': 'is_friend, is_closed, has_photo',
+            'birth_month': 1
         }
-        users = requests.get(url=self.users_search_url, params={**self.params, **json_params, **VK_data(token_program).
-                             get_user_data_for_search(user_id)}).json()['response']['items']
+
+        searcher_data = VK_data(token_program).get_user_data_for_search(user_id)
+        thirteen_thousand_users = []
+        month = 1
+        while month < 13:
+            users = requests.get(url=self.users_search_url,
+                                 params={**self.params,
+                                         **json_params,
+                                         **searcher_data}).json()['response']['items']
+            json_params['birth_month'] += 1
+            thirteen_thousand_users += users
+            month += 1
         user_info = []
-        for item in users:
-            if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] is False:
+        for item in thirteen_thousand_users:
+            if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] == False:
                 first_name = item['first_name']
                 last_name = item['last_name']
                 user_link = item['id']
                 user_info.append((first_name, last_name, user_link))
         return user_info
-
-
-config = configparser.ConfigParser()
-config.read("tokens.ini")
-token_program = config['TOKEN_SEARCH']['token']
 
 if __name__ == '__main__':
     # pprint(my_data.get_user_data(265887656))
@@ -134,3 +145,5 @@ if __name__ == '__main__':
     pprint(VK_data(token_program).get_photos(1058441))
     pprint(VK_data(token_program).get_user_data_only(1058441))
     # pprint(VK_data(token_program).get_suitable(328892096))
+    # pprint(VK_data(token_program).get_photos(1058441))
+    pprint(VK_data(token_program).get_suitable(328892096))
