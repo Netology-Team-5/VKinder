@@ -128,12 +128,13 @@ class VK_data:
             month += 1
         user_info = []
         for item in thirteen_thousand_users:
-            if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] == False:
+            if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] is False:
                 first_name = item['first_name']
                 last_name = item['last_name']
                 user_link = item['id']
                 user_info.append((first_name, last_name, user_link))
         return user_info
+
 
 if __name__ == '__main__':
     # pprint(my_data.get_user_data(265887656))
@@ -142,8 +143,8 @@ if __name__ == '__main__':
     # pprint(VK_data(token_program).get_photos(39291361))
     # pprint(VK_data(token_program).get_photos(328892096))
 
-    pprint(VK_data(token_program).get_photos(1058441))
-    pprint(VK_data(token_program).get_user_data_only(1058441))
+    # pprint(VK_data(token_program).get_photos(1058441))
+    # pprint(VK_data(token_program).get_user_data_only(1058441))
     # pprint(VK_data(token_program).get_suitable(328892096))
     # pprint(VK_data(token_program).get_photos(1058441))
     pprint(VK_data(token_program).get_suitable(328892096))

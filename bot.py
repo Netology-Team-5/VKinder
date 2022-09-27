@@ -74,7 +74,10 @@ for event in longpoll.listen():
                 write_msg(event.user_id, "Пока((")
             elif request in ("Поиск", 'да'):
                 result_search = VK_data(token_program).get_suitable(str(event.user_id))
-                write_msg(event.user_id, f"{user_info['first_name']}, я нашел для вас {len(result_search)} кандидатов(ок)\nВот один/одна из них:", keyboard.get_keyboard())
+                write_msg(event.user_id,
+                          f"{user_info['first_name']}, я нашел для вас {len(result_search)}"
+                          f" кандидат{'ок' if user_info['sex'] == 2 else 'ов'}\n"
+                          f"Вот од{'на' if user_info['sex'] == 2 else 'ин'} из них:", keyboard.get_keyboard())
                 result_user = result_search[randrange(0, len(result_search))]
                 photos = ','.join(VK_data(token_program).get_photos(str(result_user[2])))
                 write_msg(event.user_id,
