@@ -88,6 +88,7 @@ for event in longpoll.listen():
                     write_msg(event.user_id,
                               f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}',
                               keyboard.get_keyboard())
+                    photos = ','.join(VK_data(token_program).get_photos(str(result_user[2])))
                     paste_foto(event.user_id, VK_data(token_program).get_photos(str(result_user[2])),
                                keyboard.get_keyboard())
                 except TypeError:
