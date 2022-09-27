@@ -45,6 +45,7 @@ def paste_foto(user_id, attachment, *keyboard):
 result_user = None
 photos = None
 user_info = None
+
 for event in longpoll.listen():
     if user_info is not None:
         try:
@@ -84,8 +85,8 @@ for event in longpoll.listen():
                     write_msg(event.user_id, 'Сначала нужно выбрать человека. Нажмите "Поиск"', keyboard.get_keyboard())
             elif request == "Показать избранное":
                 list_of_fav = vk_db.get_fav_users(event.user_id)
-                # вызывает функцию, которая дает список избранных
                 count = 0
+                write_msg(event.user_id, f'Вашем списки "Избранное" {len(list_of_fav)} человек.\n Вот они:', keyboard.get_keyboard())
                 for fav in list_of_fav:
                     if count < 10:
                         write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard.get_keyboard())
@@ -97,4 +98,4 @@ for event in longpoll.listen():
                         paste_foto(event.user_id, fav[3], keyboard.get_keyboard())
                         count = 0
             else:
-                write_msg(event.user_id, "Не поняла вашего ответа...", keyboard.get_keyboard())
+                write_msg(event.user_id, "Не понял вашего запроса... Попробуйте команду на клавиатуре.", keyboard.get_keyboard())
