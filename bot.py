@@ -65,7 +65,7 @@ for event in longpoll.listen():
             elif request in ("Поиск", 'да', "Следующий", 'еще'):
                 result_search = VK_data(token_program).get_suitable(str(event.user_id))
                 result_user = result_search[randrange(0, len(result_search))]
-                photos = VK_data(token_program).get_photos(str(result_user[2]))
+                photos = ','.join(VK_data(token_program).get_photos(str(result_user[2])))
                 write_msg(event.user_id,
                           f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}', keyboard.get_keyboard())
                 paste_foto(event.user_id, photos, keyboard.get_keyboard())
@@ -77,7 +77,12 @@ for event in longpoll.listen():
                     pass
                 write_msg(event.user_id, "Добавлено!", keyboard.get_keyboard())
             elif request == "Показать избранное":
+                list_of_fav = vk_db.get_fav_users(event.user_id)
                 # вызывает функцию, которая дает список избранных
-                write_msg(event.user_id, "Пока что я не умею показывать избранное", keyboard.get_keyboard())
+                for fav in list_of_fav:
+                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard.get_keyboard())
+                    photos = fav[3]
+                    list_p = photos
+                    paste_foto(event.user_id, f'{photos}', keyboard.get_keyboard())
             else:
                 write_msg(event.user_id, "Не поняла вашего ответа...", keyboard.get_keyboard())
