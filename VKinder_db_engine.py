@@ -23,11 +23,12 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
-    def new_vk_user(self, age, gender, city):
+    def new_vk_user(self, user_id_in_vk, age, gender, city):
         # 2. Функция, позволяющая добавить нового юзера
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
-            cur.execute("""INSERT INTO vk_user(age, gender, city) VALUES (%s, %s, %s);""", (age, gender, city))
+            cur.execute("""INSERT INTO vk_user(user_id_in_vk, age, gender, city) VALUES (%s, %s, %s, %s);""",
+                        (user_id_in_vk, age, gender, city))
             conn.commit()
         conn.close()
 
@@ -40,34 +41,36 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
-    def favorites(self, name, surname, profile_url, photos):
+    def favorites(self, vk_user_id, name, surname, profile_url, photos):
         # 4. Функция, позволяющая добавить в избранные новую запись.
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute(
-                """INSERT INTO favorites(name, surname, profile_url, photos) VALUES (%s, %s, %s, %s);""",
-                (name, surname, profile_url, photos))
+                """INSERT INTO favorites(vk_user_id, name, surname, profile_url, photos) 
+                VALUES (%s, %s, %s, %s, %s);""",
+                (vk_user_id, name, surname, profile_url, photos))
             conn.commit()
         conn.close()
 
-    def fav_user(self, vk_user_id, fav_id):
+    def fav_user(self, user_id_in_vk, fav_id):
         # 5. Функция, позволяющая добавить новую запись в избранные юзера.
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
-            cur.execute("""INSERT INTO user_favorites(vk_user_id, fav_id) VALUES (%s, %s);""", (vk_user_id, fav_id))
+            cur.execute("""INSERT INTO user_favorites(user_id_in_vk, fav_id) VALUES (%s, %s);""",
+                        (user_id_in_vk, fav_id))
             conn.commit()
         conn.close()
 
-    def get_fav_users(self, vk_user_id):
+    def get_fav_users(self, user_id_in_vk):
         # 6. Функция, выводит список избранных людей юзера
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute("""
                 SELECT name, surname, profile_url, photos FROM user_favorites uf 
-                LEFT JOIN favorites f ON uf.fav_id = f.id
-                WHERE vk_user_id = %s;       
-            """, (vk_user_id,))
-            print(cur.fetchall())
+                LEFT JOIN favorites f ON uf.fav_id = f.vk_user_id
+                WHERE user_id_in_vk = %s;       
+            """, (user_id_in_vk,))
+            return cur.fetchall()
 
     def vk_user_removal(self, table, id):
         # 7. Функция, позволяющая удалить запись из таблицы по id

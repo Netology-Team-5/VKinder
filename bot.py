@@ -1,6 +1,9 @@
 import configparser
 import vk_api
+import time
 from random import randrange
+from datetime import date
+from psycopg2 import errors as err
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from info_vk import VK_data
@@ -12,7 +15,7 @@ config.read("tokens.ini")
 vk_api_token = config['TOKEN_BOT']['token']
 token_program = config['TOKEN_SEARCH']['token']
 
-config.read("settings.ini")
+config.read("base_settings.ini")
 db_name = config["Database"]["db_name"]
 user_name = config["Database"]["user_name"]
 user_password = config["Database"]["user_password"]
@@ -41,31 +44,58 @@ def paste_foto(user_id, attachment, *keyboard):
 
 result_user = None
 photos = None
+user_info = None
+
 for event in longpoll.listen():
+    if user_info is not None:
+        try:
+            vk_db.new_vk_user(user_info['id'],
+                              int(date.today().year - int(user_info['bdate'][-4:])), user_info['sex'],
+                              user_info['city']['id'])
+        except err.UniqueViolation:
+            pass
     if event.type == VkEventType.MESSAGE_NEW:
+        user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
         if event.to_me:
             request = event.text
-            user_info = vk.users.get(user_ids=event.user_id, fields='sex, bdate, city')
-
             if request in ("Привет", 'привет', "хай", 'Йоу'):
                 write_msg(event.user_id,
-                          f"Привет, {user_info[0]['first_name']}!\n Хочешь с кем-нибудь познакомиться?",
+                          f"Привет, {user_info['first_name']}!\n Хочешь с кем-нибудь познакомиться?",
                           keyboard.get_keyboard())
             elif request == "пока":
                 write_msg(event.user_id, "Пока((")
             elif request in ("Поиск", 'да', "Следующий", 'еще'):
                 result_search = VK_data(token_program).get_suitable(str(event.user_id))
                 result_user = result_search[randrange(0, len(result_search))]
-                photos = VK_data(token_program).get_photos(str(result_user[2]))
+                photos = ','.join(VK_data(token_program).get_photos(str(result_user[2])))
                 write_msg(event.user_id,
-                          f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}', keyboard.get_keyboard())
+                          f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}',
+                          keyboard.get_keyboard())
                 paste_foto(event.user_id, photos, keyboard.get_keyboard())
             elif request == "В избранное":
-                vk_db.favorites(result_user[0], result_user[1], f'https://vk.com/id{result_user[2]}', photos)
-                # вызывается функция добавления контакта в избранное и связи пользователя и контакта из таблицы
-                write_msg(event.user_id, "Добавлено!", keyboard.get_keyboard())
+                try:
+                    try:
+                        vk_db.favorites(result_user[2], result_user[0], result_user[1],
+                                        f'https://vk.com/id{result_user[2]}', str(photos))
+                        vk_db.fav_user(event.user_id, result_user[2])
+                    except err.UniqueViolation:
+                        pass
+                    write_msg(event.user_id, "Добавлено!", keyboard.get_keyboard())
+                except TypeError:
+                    write_msg(event.user_id, 'Сначала нужно выбрать человека. Нажмите "Поиск"', keyboard.get_keyboard())
             elif request == "Показать избранное":
-                # вызывает функцию, которая дает список избранных
-                write_msg(event.user_id, "Пока что я не умею показывать избранное", keyboard.get_keyboard())
+                list_of_fav = vk_db.get_fav_users(event.user_id)
+                count = 0
+                write_msg(event.user_id, f'Вашем списки "Избранное" {len(list_of_fav)} человек.\n Вот они:', keyboard.get_keyboard())
+                for fav in list_of_fav:
+                    if count < 10:
+                        write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard.get_keyboard())
+                        paste_foto(event.user_id, fav[3], keyboard.get_keyboard())
+                        count += 1
+                    else:
+                        time.sleep(1)
+                        write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard.get_keyboard())
+                        paste_foto(event.user_id, fav[3], keyboard.get_keyboard())
+                        count = 0
             else:
-                write_msg(event.user_id, "Не поняла вашего ответа...", keyboard.get_keyboard())
+                write_msg(event.user_id, "Не понял вашего запроса... Попробуйте команду на клавиатуре.", keyboard.get_keyboard())

@@ -12,20 +12,20 @@ new_db = DatabaseConfig(db_name, user_name, user_password)
 
 if __name__ == '__main__':
 
-    # # 0. Функция, удаляющая таблицы БД:
-    # # def table_removal(table_name)
+    # 0. Функция, удаляющая таблицы БД:
+    # def table_removal(table_name)
     #
-    # new_db.table_removal('user_favorites')
-    # new_db.table_removal('vk_user')
-    # new_db.table_removal('favorites')
+    new_db.table_removal('user_favorites')
+    new_db.table_removal('vk_user')
+    new_db.table_removal('favorites')
 
 
-    # # 1. Функция, создающая таблицы БД:
-    # # def table_creation(table_name, table_columns)
+    # 1. Функция, создающая таблицы БД:
+    # def table_creation(table_name, table_columns)
     #
-    # new_db.table_creation('vk_user', 'id SERIAL PRIMARY KEY, age INTEGER NOT NULL, gender VARCHAR(7) NOT NULL, city VARCHAR(40) NOT NULL')
-    # new_db.table_creation('favorites', 'id SERIAL PRIMARY KEY, name VARCHAR(50), surname VARCHAR(50), profile_url VARCHAR(100) UNIQUE NOT NULL, photos VARCHAR(100)')
-    # new_db.table_creation('user_favorites', 'id SERIAL PRIMARY KEY, vk_user_id INTEGER NOT NULL REFERENCES vk_user(id), fav_id INTEGER NOT NULL REFERENCES favorites(id)')
+    new_db.table_creation('vk_user', 'user_id_in_vk INTEGER PRIMARY KEY NOT NULL, age INTEGER NOT NULL, gender INTEGER NOT NULL, city INTEGER NOT NULL')
+    new_db.table_creation('favorites', 'vk_user_id INTEGER PRIMARY KEY, name VARCHAR(50), surname VARCHAR(50), profile_url VARCHAR(100) UNIQUE NOT NULL, photos VARCHAR(100)')
+    new_db.table_creation('user_favorites', 'id SERIAL PRIMARY KEY, user_id_in_vk INTEGER NOT NULL REFERENCES vk_user(user_id_in_vk), fav_id INTEGER NOT NULL REFERENCES favorites(vk_user_id)')
 
 
     # # 2. Функция, позволяющая добавить нового юзера
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     # # def favorites(name, surname, profile_url, photo_1_url, photo_2_url, photo_3_url)
     #
     # new_db.favorites('Регина', 'Плеханова', 'https://vk.com/regina_msk', 'photo100172_166443618,photo100172_166443618,photo100172_166443618')
-    new_db.favorites('Диана', 'Сухорукова', 'https://vk.com/id41347328', 'https://vk.com/id41347328?z=photo41347328_457245753%2Falbum41347328_0%2Frev')
+    # new_db.favorites('Диана', 'Сухорукова', 'https://vk.com/id41347328', 'https://vk.com/id41347328?z=photo41347328_457245753%2Falbum41347328_0%2Frev')
 
     # # 5. Функция, позволяющая добавить связать запись в избранных с юзером.
     # # def fav_user(vk_user_id, fav_id)
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     # # 6. Функция, выводит список избранных юзера
     # # def get_fav_users(vk_user_id)
     # #
-    # new_db.get_fav_users(1)
+    new_db.get_fav_users(7451160)
 
 
     # # 7. Функция, позволяющая удалить запись из таблицы по id
