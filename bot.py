@@ -44,15 +44,14 @@ result_user = None
 photos = None
 user_info = None
 for event in longpoll.listen():
-    user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
-    vk_db.new_vk_user(event.user_id,
-                      int(date.today().year - int(user_info['bdate'][-4:])), user_info['sex'], user_info['city']['id'])
+    if user_info is not None:
+        vk_db.new_vk_user(user_info['id'],
+                          int(date.today().year - int(user_info['bdate'][-4:])), user_info['sex'],
+                          user_info['city']['id'])
     if event.type == VkEventType.MESSAGE_NEW:
+        user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
         if event.to_me:
             request = event.text
-            # user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
-            # vk_db.new_vk_user(event.user_id,
-            #                   (date.today().year - int(user_info['bdate'][-4:])), user_info['sex'], user_info['city']['id'])
             if request in ("Привет", 'привет', "хай", 'Йоу'):
                 write_msg(event.user_id,
                           f"Привет, {user_info['first_name']}!\n Хочешь с кем-нибудь познакомиться?",
@@ -68,6 +67,7 @@ for event in longpoll.listen():
                 paste_foto(event.user_id, photos, keyboard.get_keyboard())
             elif request == "В избранное":
                 vk_db.favorites(result_user[0], result_user[1], f'https://vk.com/id{result_user[2]}', photos)
+
                 # вызывается функция добавления контакта в избранное и связи пользователя и контакта из таблицы
                 write_msg(event.user_id, "Добавлено!", keyboard.get_keyboard())
             elif request == "Показать избранное":
