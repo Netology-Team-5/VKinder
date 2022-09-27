@@ -115,7 +115,7 @@ class VK_data:
             'birth_month': 1
         }
 
-        searcher_data = VK_data(token_program).get_user_data(user_id)
+        searcher_data = VK_data(token_program).get_user_data_for_search(user_id)
         thirteen_thousand_users = []
         month = 1
         while month < 13:
@@ -126,13 +126,9 @@ class VK_data:
             json_params['birth_month'] += 1
             thirteen_thousand_users += users
             month += 1
-        users = requests.get(url=self.users_search_url, params={**self.params, **json_params, **VK_data(token_program).
-                             get_user_data_for_search(user_id)}).json()['response']['items']
         user_info = []
         for item in thirteen_thousand_users:
             if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] == False:
-        for item in users:
-            if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] is False:
                 first_name = item['first_name']
                 last_name = item['last_name']
                 user_link = item['id']
