@@ -115,11 +115,12 @@ class VK_data:
             'birth_month': 1,
         }
 
-        searcher_data = self.get_user_data_for_search(user_id)
+        searcher_data = str(self.get_user_data_for_search(user_id)).strip('{}')
         vk_code = 'var thirteen_thousand_users = [];' \
                   'var month = 1;' \
                   'while (month < 13) {' \
-                  'var users = API.users.search({"fields:"is_friend,is_closed,has_photo","birth_month":month});' \
+                  'var users = API.users.search({"fields:"is_friend,is_closed,has_photo","birth_month":month,' + \
+                  searcher_data + '});' \
                   'thirteen_thousand_users = thirteen_thousand_users + users;' \
                   'month = month + 1;};' \
                   'return thirteen_thousand_users;'
