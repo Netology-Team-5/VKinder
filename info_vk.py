@@ -4,16 +4,13 @@ import configparser
 from pprint import pprint
 
 
-config = configparser.ConfigParser()
-config.read("tokens.ini")
-token_program = config['TOKEN_SEARCH']['token']
-
-
 class VK_data:
+
     users_get_url = 'https://api.vk.com/method/users.get'
     users_search_url = 'https://api.vk.com/method/users.search'
     friends_get_url = 'https://api.vk.com/method/friends.get'
     photos_get_url = 'https://api.vk.com/method/photos.get'
+    execute_url = 'https://api.vk.com/method/execute'
 
     def __init__(self, vk_token):
 
@@ -32,11 +29,13 @@ class VK_data:
             'count': 15,
             'fields': 'bdate'
         }
+
         friends = requests.get(url=self.friends_get_url,
                                params={**self.params, **json_params}).json()['response']['items']
         friends_age_list = [datetime.now().year - datetime.strptime(item['bdate'], "%d.%m.%Y").year
                             for item in friends if 'bdate' in item if len(item['bdate']) >= 8]
         average_age = int(sum(friends_age_list) / len(friends_age_list))
+
         return average_age
 
     def get_user_data_only(self, user_ids):
@@ -47,8 +46,10 @@ class VK_data:
             'user_ids': user_ids,
             'fields': 'bdate, city, sex'
         }
+
         user_data = requests.get(url=self.users_get_url,
                                  params={**self.params, **json_params}).json()['response'][0]
+
         return user_data
 
     def get_user_data_for_search(self, user_ids):
@@ -59,14 +60,17 @@ class VK_data:
             'user_ids': user_ids,
             'fields': 'bdate, city, sex'
         }
+
         user_data = requests.get(url=self.users_get_url,
                                  params={**self.params, **json_params}).json()['response'][0]
+
         sex = user_data['sex']
         if sex == 1:
             sex = 2
         if sex == 2:
             sex = 1
         city = user_data['city']['id']
+
         if 'bdate' in user_data:
             if len(user_data['bdate']) >= 8:
                 age = datetime.now().year - datetime.strptime(user_data['bdate'], "%d.%m.%Y").year
@@ -77,15 +81,18 @@ class VK_data:
         age_from = age - 10
         age_to = age + 0
         my_params = {'sex': sex, 'age_from': age_from, 'age_to': age_to, 'city': city}
+
         return my_params
 
     def get_photos(self, owner_id):
+
         json_params = {
             'owner_id': owner_id,
             'album_id': 'profile',
             'extended': 1,
             'offset': 0
         }
+
         try:
             photos_json = requests.get(self.photos_get_url,
                                        params={**self.params, **json_params}).json()['response']
@@ -109,23 +116,18 @@ class VK_data:
         """ Сбор информации по подходящим людям:
         Имя, Фамилия, урлы фотографий и лайки к ним """
 
-        json_params = {
-            'count': 1000,
-            'fields': 'is_friend, is_closed, has_photo',
-            'birth_month': 1
-        }
+        searcher_data = str(self.get_user_data_for_search(user_id)).strip('{}').replace("'", '"')
+        vk_code = 'var month, thirteen_thousand_users, users;' \
+                  'thirteen_thousand_users = [];' \
+                  'month = 1;' \
+                  'while (month < 13) {' \
+                  '    users = API.users.search({"count": 1000, "fields": "is_friend,is_closed,has_photo", "birth_month": month, ' + searcher_data + '}).items;' \
+                  '    thirteen_thousand_users = thirteen_thousand_users + users;' \
+                  '    month = month + 1;' \
+                  '};' \
+                  'return thirteen_thousand_users;'
+        thirteen_thousand_users = requests.get(url=self.execute_url, params={**self.params, 'code': vk_code}).json()['response']
 
-        searcher_data = self.get_user_data_for_search(user_id)
-        thirteen_thousand_users = []
-        month = 1
-        while month < 13:
-            users = requests.get(url=self.users_search_url,
-                                 params={**self.params,
-                                         **json_params,
-                                         **searcher_data}).json()['response']['items']
-            json_params['birth_month'] += 1
-            thirteen_thousand_users += users
-            month += 1
         user_info = []
         for item in thirteen_thousand_users:
             if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] is False:
@@ -133,10 +135,16 @@ class VK_data:
                 last_name = item['last_name']
                 user_link = item['id']
                 user_info.append((first_name, last_name, user_link))
+
         return user_info
 
 
 if __name__ == '__main__':
+
+    config = configparser.ConfigParser()
+    config.read("tokens.ini")
+    token_program = config['TOKEN_SEARCH']['token']
+
     # pprint(my_data.get_user_data(265887656))
     # pprint(my_data.get_user_data(328892096))
 
