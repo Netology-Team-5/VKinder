@@ -26,8 +26,8 @@ def paste_foto(user_id, attachment, *keyboard):
 if __name__ == '__main__':
 
     config = configparser.ConfigParser()
-
     config.read("tokens.ini")
+
     vk_api_token = config['TOKEN_BOT']['token']
     if config['TOKEN_SEARCH']['token'] == '':
         try:
