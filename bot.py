@@ -116,8 +116,7 @@ if __name__ == '__main__':
                     write_msg(event.user_id,
                               f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}',
                               keyboard2.get_keyboard())
-                    paste_foto(event.user_id, VK_data(token_program).get_photos(str(result_user[2])),
-                               keyboard2.get_keyboard())
+                    paste_foto(event.user_id, photos, keyboard2.get_keyboard())
 
                 elif request in ("Следующий", 'еще'):
                     try:
