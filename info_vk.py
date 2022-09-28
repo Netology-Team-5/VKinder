@@ -154,5 +154,5 @@ if __name__ == '__main__':
     # pprint(VK_data(token_program).get_photos(1058441))
     # pprint(VK_data(token_program).get_user_data_only(1058441))
     # pprint(VK_data(token_program).get_suitable(328892096))
-    # pprint(VK_data(token_program).get_photos(1058441))
-    pprint(VK_data(token_program).get_suitable(328892096))
+    pprint(VK_data(token_program).get_photos(78095))
+    # pprint(VK_data(token_program).get_suitable(328892096))
