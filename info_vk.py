@@ -67,7 +67,7 @@ class VK_data:
         sex = user_data['sex']
         if sex == 1:
             sex = 2
-        if sex == 2:
+        elif sex == 2:
             sex = 1
         city = user_data['city']['id']
 
@@ -151,8 +151,10 @@ if __name__ == '__main__':
     # pprint(VK_data(token_program).get_photos(39291361))
     # pprint(VK_data(token_program).get_photos(328892096))
 
-    # pprint(VK_data(token_program).get_photos(1058441))
+    # pprint(VK_data(token_program).get_photos(78095))
     # pprint(VK_data(token_program).get_user_data_only(1058441))
+    # pprint(VK_data(token_program).get_suitable(48659957))
+    # pprint(VK_data(token_program).get_photos(1058441))
     # pprint(VK_data(token_program).get_suitable(328892096))
-    pprint(VK_data(token_program).get_photos(78095))
-    # pprint(VK_data(token_program).get_suitable(328892096))
+    # pprint(VK_data(token_program).get_photos(78095))
+    pprint(VK_data(token_program).get_suitable(78095))
