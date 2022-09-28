@@ -4,6 +4,11 @@ import time
 from random import randrange
 from datetime import date
 from psycopg2 import errors as err
+import webbrowser
+from selenium.common import exceptions
+from sys import exit
+
+import get_code
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from info_vk import VK_data
@@ -24,7 +29,14 @@ if __name__ == '__main__':
 
     config.read("tokens.ini")
     vk_api_token = config['TOKEN_BOT']['token']
-    token_program = config['TOKEN_SEARCH']['token']
+    if config['TOKEN_SEARCH']['token'] == '':
+        try:
+            token_program = get_code.get_token_vk()
+        except exceptions.NoSuchWindowException:
+            exit('Запустите программу заново и введите ключ авторизации корректно: либо в браузере, либо в файле tokens.ini')
+
+    else:
+        token_program = config['TOKEN_SEARCH']['token']
 
     config.read("base_settings.ini")
     db_name = config["Database"]["db_name"]
@@ -59,6 +71,8 @@ if __name__ == '__main__':
     photos = None
     user_info = None
 
+    webbrowser.open('https://vk.com/im?sel=-216099509')
+
     for event in longpoll.listen():
         if user_info is not None:
             try:
@@ -85,6 +99,7 @@ if __name__ == '__main__':
                               keyboard1.get_keyboard())
                 elif request == "пока":
                     write_msg(event.user_id, "Пока((")
+                    break
                 elif request in ("Поиск", 'да'):
                     result_search = VK_data(token_program).get_suitable(str(event.user_id))
                     write_msg(event.user_id,
