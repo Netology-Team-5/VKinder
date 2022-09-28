@@ -23,7 +23,7 @@ if __name__ == '__main__':
     config = configparser.ConfigParser()
 
     config.read("tokens.ini")
-    vk_api_token = config['TOKEN_BOT']['token']
+    vk_api_token = config['TOKEN_BOT']['token_my']
     token_program = config['TOKEN_SEARCH']['token']
 
     config.read("base_settings.ini")
@@ -123,18 +123,21 @@ if __name__ == '__main__':
                 elif request == "Показать избранное":
                     list_of_fav = vk_db.get_fav_users(event.user_id)
                     count = 0
-                    write_msg(event.user_id, f'Вашем списки "Избранное" {len(list_of_fav)} человек.\n Вот они:',
-                              keyboard2.get_keyboard())
-                    for fav in list_of_fav:
-                        if count < 10:
-                            write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard2.get_keyboard())
-                            paste_foto(event.user_id, fav[3], keyboard2.get_keyboard())
-                            count += 1
-                        else:
-                            time.sleep(1)
-                            write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard2.get_keyboard())
-                            paste_foto(event.user_id, fav[3], keyboard2.get_keyboard())
-                            count = 0
+                    if len(list_of_fav) == 0:
+                        write_msg(event.user_id, f'Вашем списки "Избранное" {len(list_of_fav)} человек.\n Вот они:',
+                                  keyboard2.get_keyboard())
+                        for fav in list_of_fav:
+                            if count < 10:
+                                write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard2.get_keyboard())
+                                paste_foto(event.user_id, fav[3], keyboard2.get_keyboard())
+                                count += 1
+                            else:
+                                time.sleep(1)
+                                write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard2.get_keyboard())
+                                paste_foto(event.user_id, fav[3], keyboard2.get_keyboard())
+                                count = 0
+                    else:
+                        write_msg(event.user_id, f'Вашем списки "Избранное" 0 человек.', keyboard2.get_keyboard())
                 else:
                     write_msg(event.user_id, "Не понял вашего запроса... Попробуйте команду на клавиатуре.",
                               keyboard2.get_keyboard())
