@@ -86,7 +86,7 @@ if __name__ == '__main__':
                 user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
             if event.to_me:
                 request = event.text
-                if request in ("Привет", 'привет', "хай", 'Йоу'):
+                if request in ("Привет", 'привет', "хай", 'Йоу', 'Начать'):
                     if user_info is not None:
                         try:
                             vk_db.new_vk_user(user_info['id'],
@@ -97,7 +97,7 @@ if __name__ == '__main__':
                     write_msg(event.user_id,
                               f"Привет, {user_info['first_name']}!\n Хочешь с кем-нибудь познакомиться?",
                               keyboard1.get_keyboard())
-                elif request == "пока":
+                elif request in ("пока", 'нет', 'Нет'):
                     write_msg(event.user_id, "Пока((")
                     break
                 elif request in ("Поиск", 'да'):
