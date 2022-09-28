@@ -7,10 +7,10 @@ from psycopg2 import errors as err
 import webbrowser
 from selenium.common import exceptions
 from sys import exit
-
-import get_code
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+
+import get_code
 from info_vk import VK_data
 from VKinder_db_engine import DatabaseConfig
 
@@ -81,11 +81,14 @@ if __name__ == '__main__':
                                   user_info['city']['id'])
             except err.UniqueViolation:
                 pass
+
         if event.type == VkEventType.MESSAGE_NEW:
             if user_info is None:
                 user_info = VK_data(token_program).get_user_data_only(str(event.user_id))
+
             if event.to_me:
                 request = event.text
+
                 if request in ("Привет", 'привет', "хай", 'Йоу', 'Начать'):
                     if user_info is not None:
                         try:
@@ -97,9 +100,11 @@ if __name__ == '__main__':
                     write_msg(event.user_id,
                               f"Привет, {user_info['first_name']}!\n Хочешь с кем-нибудь познакомиться?",
                               keyboard1.get_keyboard())
+
                 elif request in ("пока", 'нет', 'Нет'):
                     write_msg(event.user_id, "Пока((")
                     break
+
                 elif request in ("Поиск", 'да'):
                     result_search = VK_data(token_program).get_suitable(str(event.user_id))
                     write_msg(event.user_id,
@@ -113,6 +118,7 @@ if __name__ == '__main__':
                               keyboard2.get_keyboard())
                     paste_foto(event.user_id, VK_data(token_program).get_photos(str(result_user[2])),
                                keyboard2.get_keyboard())
+
                 elif request in ("Следующий", 'еще'):
                     try:
                         result_user = result_search[randrange(0, len(result_search))]
@@ -125,6 +131,7 @@ if __name__ == '__main__':
                     except TypeError:
                         write_msg(event.user_id, 'Чтобы выбирать следующего, сначала нажмите "Поиск"',
                                   keyboard2.get_keyboard())
+
                 elif request == "В избранное":
                     try:
                         try:
@@ -137,6 +144,7 @@ if __name__ == '__main__':
                     except TypeError:
                         write_msg(event.user_id, 'Сначала нужно выбрать человека. Нажмите "Поиск"',
                                   keyboard2.get_keyboard())
+
                 elif request == "Показать избранное":
                     list_of_fav = vk_db.get_fav_users(event.user_id)
                     count = 0
@@ -152,6 +160,7 @@ if __name__ == '__main__':
                             write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard2.get_keyboard())
                             paste_foto(event.user_id, fav[3], keyboard2.get_keyboard())
                             count = 0
+
                 else:
                     write_msg(event.user_id, "Не понял вашего запроса... Попробуйте команду на клавиатуре.",
                               keyboard2.get_keyboard())
