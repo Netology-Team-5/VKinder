@@ -14,6 +14,7 @@ class VK_data:
     users_search_url = 'https://api.vk.com/method/users.search'
     friends_get_url = 'https://api.vk.com/method/friends.get'
     photos_get_url = 'https://api.vk.com/method/photos.get'
+    execute_url = 'https://api.vk.com/method/execute'
 
     def __init__(self, vk_token):
 
@@ -110,23 +111,20 @@ class VK_data:
         Имя, Фамилия, урлы фотографий и лайки к ним """
 
         json_params = {
-            'count': 1000,
             'fields': 'is_friend, is_closed, has_photo',
-            'birth_month': 1
+            'birth_month': 1,
         }
 
-        searcher_data = VK_data(token_program).get_user_data_for_search(user_id)
-        thirteen_thousand_users = []
-        month = 1
-        while month < 13:
-            users = requests.get(url=self.users_search_url,
-                                 params={**self.params,
-                                         **json_params,
-                                         **searcher_data}).json()['response']['items']
-            json_params['birth_month'] += 1
-            thirteen_thousand_users += users
-            month += 1
+        searcher_data = self.get_user_data_for_search(user_id)
+        vk_code = 'var thirteen_thousand_users = [];' \
+                  'var month = 1;' \
+                  'while (month < 13) {' \
+                  'var users = API.users.search({"fields:"is_friend,is_closed,has_photo","birth_month":month});' \
+                  'thirteen_thousand_users = thirteen_thousand_users + users;' \
+                  'month = month + 1;};' \
+                  'return thirteen_thousand_users;'
         user_info = []
+        thirteen_thousand_users = requests.get(url=self.execute_url, params={**self.params, 'code': vk_code}).json()
         for item in thirteen_thousand_users:
             if item['is_friend'] == 0 and item['has_photo'] == 1 and item['is_closed'] is False:
                 first_name = item['first_name']
