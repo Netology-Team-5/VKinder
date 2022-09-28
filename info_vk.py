@@ -115,7 +115,7 @@ class VK_data:
             'birth_month': 1
         }
 
-        searcher_data = VK_data(token_program).get_user_data_for_search(user_id)
+        searcher_data = self.get_user_data_for_search(user_id)
         thirteen_thousand_users = []
         month = 1
         while month < 13:
