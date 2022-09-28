@@ -67,7 +67,7 @@ class VK_data:
         sex = user_data['sex']
         if sex == 1:
             sex = 2
-        if sex == 2:
+        elif sex == 2:
             sex = 1
         city = user_data['city']['id']
 
