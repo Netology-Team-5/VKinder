@@ -12,10 +12,10 @@ createbd -U логин имя_бд
 createbd -U postgres VKinder
 `
 
-3. В файле [base_settings.ini](https://github.com/Netology-Team-5/VKinder/base_settings.ini) прописать:
-* Имя бд к `db_name`(по умолчанию `= VKinder`);
-* Логин postgres к `user_name`(по умолчание `postgres`);
-* Пароль postgres к `user_password`.
+3. В файле [base_settings.ini](https://github.com/Netology-Team-5/VKinder/blob/main/base_settings.ini) прописать:
+- Имя бд к `db_name`(по умолчанию `= VKinder`);
+- Логин postgres к `user_name`(по умолчание `postgres`);
+- Пароль postgres к `user_password`.
 
 4. В файле `tokens.ini` прописать токен к VK.
 Сгенерировать личный ключ по [ссылке](https://oauth.vk.com/oauth/authorize?client_id=51432598&scope=65536&redirect_uri=https://vk.com/im?media%3D&sel=-216114574&display=popup&response_type=token&slogin_h=9a90a048692bb5042b.5b693fa27bae8d0d3a&__q_hash=a744e6552469a618bf825b408b432d41) 
@@ -23,7 +23,7 @@ createbd -U postgres VKinder
 
 В `[TOKEN_BOT]` лежит ключ на группу. Его трогать не надо. 
 
-5. Запустить [бота](https://github.com/Netology-Team-5/VKinder/bot.py).
+5. Запустить [бота](https://github.com/Netology-Team-5/blob/main/VKinder/bot.py).
 
 6. Войти в vk в группу [Team5 VKinder](https://vk.com/club216099509)
 7. Написать сообщение сообществу "Привет"
@@ -32,12 +32,12 @@ createbd -U postgres VKinder
 Бот выведет на экран подходящего под критерии поиска человека. 
 
 Кнопки:
-`Поиск` - программа выполнит новый поиск. 
+- `Поиск` - программа выполнит новый поиск. 
 Имеет смысл повторно нажимать, чтобы в выборку попали новые пользователи, которых не было на момент выполнения первого поиска.
 
-`Следующий` - выведет на экран, следующего человека, подходящего под критерии поиска.
+- `Следующий` - выведет на экран, следующего человека, подходящего под критерии поиска.
 
-`Избранное` - добавит текущего на экране человека в подборку "Избранное"
+- `Избранное` - добавит текущего на экране человека в подборку "Избранное"
 
-`Список избранных` - выведет на экран поочередно, всех людей, которых добавили в "Избранное"
+- `Список избранных` - выведет на экран поочередно, всех людей, которых добавили в "Избранное"
 

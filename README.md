@@ -19,9 +19,10 @@
 
 
 ### Зависимости
-Этот пакет зависит от python версии 3.10 или выше.
-
+- python (3.4+)
+- pip
+- python-dev
 
 ### Документация
-*[Как работать](https://github.com/Netology-Team-5/VKinder/docs/how_to_start.md)
-*[Список файлов с описанием](https://github.com/Netology-Team-5/VKinder/docs/files_list.md)
+-[Как работать](https://github.com/Netology-Team-5/VKinder/blob/main/docs/how_to_start.md)
+-[Список файлов с описанием](https://github.com/Netology-Team-5/VKinder/blob/main/docs/files_list.md)
