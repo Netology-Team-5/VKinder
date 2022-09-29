@@ -23,9 +23,9 @@ createbd -U postgres VKinder
 - В `[TOKEN_SEARCH]` добавить личный ключ
 - В `[TOKEN_BOT]` лежит ключ на группу. Его трогать не надо. 
 
-5. Запустить [бота](https://github.com/Netology-Team-5/VKinder/blob/main/VKinder/bot.py).
+5. Запустить [бота](https://github.com/Netology-Team-5/VKinder/blob/main/bot.py).
 
-6. Войти в личный чат группу [Team5 VKinder](https://vk.com/im?sel=-216099509)
+6. Войти в личный чат группы [Team5 VKinder](https://vk.com/im?sel=-216099509)
 7. Написать сообщение "Привет" 
 9. Нажать на кнопку Поиск. 
 - Бот выведет на экран подходящего под критерии поиска человека. 
