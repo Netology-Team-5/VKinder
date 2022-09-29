@@ -1,30 +1,43 @@
+"""Модуль работы с базой данных PostgreSQL.
+
+класс DatabaseConfig содержит методы для работы c базой данных;
+метод table_creation создает таблицы;
+метод table_removal удаляет таблицы;
+метод new_vk_user добавляет нового пользователя в таблицу;
+метод vk_user_editor изменяет данные пользователя в таблице;
+метод favorites добавляет в таблицу favorites новую запись;
+метод get_fav_users возвращает список избранных профилей пользователя;
+метод vk_user_removal удаляет запись по id пользователя;
+"""
 import psycopg2
 
 
 class DatabaseConfig:
-    def __init__(self, database, user, password):
+    """Содержит методы для работы с базой данных PostgreSQL."""
+    def __init__(self, database: str, user: str, password: str):
+        """Получает название базы данных, пользователя базы данных и пароля для подключения."""
         self.database = database
         self.user = user
         self.password = password
 
-    def table_creation(self, table_name, table_columns):
-        # 1. Функция, создающая таблицы БД:
+    def table_creation(self, table_name: str, table_columns: str):
+        """Создает таблицы в базе данных."""
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute(f"""CREATE TABLE IF NOT EXISTS {table_name} ({table_columns});""")
             conn.commit()
         conn.close()
 
-    def table_removal(self, table_name):
-        # Функция, удаляющая таблицы БД:
+    def table_removal(self, table_name: str):
+        """Удаляет таблицы из базы данных."""
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute(f"""DROP TABLE {table_name};""")
             conn.commit()
         conn.close()
 
-    def new_vk_user(self, user_id_in_vk, age, gender, city):
-        # 2. Функция, позволяющая добавить нового юзера
+    def new_vk_user(self, user_id_in_vk: int, age: int, gender: int, city: int):
+        """Добавляет нового пользователя в таблицу vk_user."""
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute("""INSERT INTO vk_user(user_id_in_vk, age, gender, city) VALUES (%s, %s, %s, %s);""",
@@ -32,8 +45,8 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
-    def vk_user_editor(self, age, gender, city, user_id):
-        # 3. Функция, позволяющая изменить данные о юзере
+    def vk_user_editor(self, age: int, gender: int, city: int, user_id: int):
+        """Изменяет данные пользователя в таблице vk_user."""
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute("""UPDATE vk_user SET age = %s, gender = %s, city = %s WHERE id = %s;""",
@@ -41,8 +54,8 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
-    def favorites(self, vk_user_id, name, surname, profile_url, photos):
-        # 4. Функция, позволяющая добавить в избранные новую запись.
+    def favorites(self, vk_user_id: int, name: str, surname: str, profile_url: str, photos: str):
+        """Добавляет в таблицу favorites новую запись."""
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute(
@@ -52,8 +65,8 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
-    def fav_user(self, user_id_in_vk, fav_id):
-        # 5. Функция, позволяющая связать запись в избранных с юзером.
+    def fav_user(self, user_id_in_vk: int, fav_id: int):
+        """Связывает запись в favorites и vk_user через таблицу user_favorites."""
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute("""INSERT INTO user_favorites(user_id_in_vk, fav_id) VALUES (%s, %s);""",
@@ -61,8 +74,11 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
-    def get_fav_users(self, user_id_in_vk):
-        # 6. Функция, выводит список избранных людей юзера
+    def get_fav_users(self, user_id_in_vk: int) -> list:
+        """Возвращает список избранных профилей пользователя.
+
+        :return список кортежей, содержащих id профиля, имя, фамилию, фотографии.
+        """
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute("""
@@ -72,10 +88,10 @@ class DatabaseConfig:
             """, (user_id_in_vk,))
             return cur.fetchall()
 
-    def vk_user_removal(self, table, id):
-        # 7. Функция, позволяющая удалить запись из таблицы по id
+    def vk_user_removal(self, table: str, id_user: int):
+        """Удаляет запись из таблицы по id пользователя."""
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
-            cur.execute(f"""DELETE FROM {table} WHERE id=%s;""", id)
+            cur.execute(f"""DELETE FROM {table} WHERE id=%s;""", id_user)
             conn.commit()
         conn.close()
