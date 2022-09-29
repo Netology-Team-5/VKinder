@@ -30,8 +30,7 @@
 - `def vk_user_removal` - функция, позволяющая удалить запись из таблицы по id; 
 
 5. [VKinder_db_input.py](https://github.com/Netology-Team-5/VKinder/blob/main/VKinder_db_input.py)
-Скрипты для работы с базой данных. 
-Создание и заполнение таблиц для проверки и тестирования базы данных. 
+Скрипты для работы с базой данных (создание, заполнение таблиц для проверки и тестирования). 
 
 6. [tokens.ini](https://github.com/Netology-Team-5/VKinder/blob/main/tokens.ini)
 Токены для работы с API vk
