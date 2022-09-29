@@ -11,7 +11,7 @@
 ```
 Имя Фамилия
 ссылка на профиль
-три фотографии в виде attachment(https://dev.vk.com/method/messages.send)
+три фотографии в виде attachment
 ```
 4. Переходит к следующему человеку с помощью кнопки.
 5. Сохраняет подходящих людей в список избранных.
@@ -20,8 +20,10 @@
 
 ### Зависимости
 - python (3.4+)
-- pip
-- python-dev
+- postgreSQL (14+)
+- psycopg2 (2.9.3+)
+- requests (2.28.1+)
+- vk-api (11.9.9+)
 
 ### Документация
 - [Как работать](https://github.com/Netology-Team-5/VKinder/blob/main/docs/how_to_start.md)
