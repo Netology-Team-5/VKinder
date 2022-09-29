@@ -46,7 +46,7 @@ new_db = DatabaseConfig(db_name, user_name, user_password)
     # new_db.favorites('Регина', 'Плеханова', 'https://vk.com/regina_msk', 'photo100172_166443618,photo100172_166443618,photo100172_166443618')
     # new_db.favorites('Диана', 'Сухорукова', 'https://vk.com/id41347328', 'https://vk.com/id41347328?z=photo41347328_457245753%2Falbum41347328_0%2Frev')
 
-    # # 5. Функция, позволяющая добавить связать запись в избранных с юзером.
+    # # 5. Функция, позволяющая связать запись в избранных с юзером.
     # # def fav_user(vk_user_id, fav_id)
     #
     # new_db.fav_user(1,1)

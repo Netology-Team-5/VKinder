@@ -53,7 +53,7 @@ class DatabaseConfig:
         conn.close()
 
     def fav_user(self, user_id_in_vk, fav_id):
-        # 5. Функция, позволяющая добавить новую запись в избранные юзера.
+        # 5. Функция, позволяющая связать запись в избранных с юзером.
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute("""INSERT INTO user_favorites(user_id_in_vk, fav_id) VALUES (%s, %s);""",
