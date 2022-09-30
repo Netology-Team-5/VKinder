@@ -7,7 +7,6 @@
 метод get_photos возвращает фотографии найденного профиля;
 метод get_suitable возвращает информацию о подходящих профилях.
 """
-
 import configparser
 import requests
 from datetime import datetime
