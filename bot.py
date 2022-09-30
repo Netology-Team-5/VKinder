@@ -130,6 +130,7 @@ if __name__ == '__main__':
                         write_msg(event.user_id, "Пока((")
                         break
                     elif request in ("Поиск", 'да'):
+                        write_msg(event.user_id, 'Уже ищу. Дайте мне несколько секунд.', keyboard2.get_keyboard())
                         result_search = VK_data(token_program).get_suitable(event.user_id)
                         write_msg(event.user_id,
                                   f"{user_info['first_name']}, я нашел для вас {len(result_search)}"
