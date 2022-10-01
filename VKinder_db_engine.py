@@ -74,6 +74,15 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
+    def user_blacklist(self, user_id_in_vk: int, blk_id: int):
+        """Добавляет в user_blacklist новую запись."""
+        conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
+        with conn.cursor() as cur:
+            cur.execute("""INSERT INTO user_blacklist(user_id_in_vk, blk_id) VALUES (%s, %s);""",
+                        (user_id_in_vk, blk_id))
+            conn.commit()
+        conn.close()
+
     def get_fav_users(self, user_id_in_vk: int) -> list:
         """Возвращает список избранных профилей пользователя.
 
@@ -87,6 +96,20 @@ class DatabaseConfig:
                 WHERE user_id_in_vk = %s;       
             """, (user_id_in_vk,))
             return cur.fetchall()
+
+    def get_user_blacklist(self, user_id_in_vk: int) -> list:
+        """Возвращает список профилей из черного списка пользователя.
+
+        :return список id профилей, находящихся в черном списке.
+        """
+        conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT blk_id FROM user_blacklist
+                WHERE user_id_in_vk = %s;       
+            """, (user_id_in_vk,))
+            result = [item[0] for item in cur.fetchall()]
+            return result
 
     def vk_user_removal(self, table: str, id_user: int):
         """Удаляет запись из таблицы по id пользователя."""
