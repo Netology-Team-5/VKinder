@@ -69,10 +69,9 @@ if __name__ == '__main__':
         vk_db.table_creation('user_favorites', '           id SERIAL PRIMARY KEY, '
                                                'user_id_in_vk INTEGER NOT NULL REFERENCES vk_user(user_id_in_vk), '
                                                '       fav_id INTEGER NOT NULL REFERENCES favorites(vk_user_id)')
-        vk_db.table_creation('blacklist', ' vk_user_id INTEGER PRIMARY KEY')
         vk_db.table_creation('user_blacklist', '           id SERIAL PRIMARY KEY, '
                                                'user_id_in_vk INTEGER NOT NULL REFERENCES vk_user(user_id_in_vk), '
-                                               '       blk_id INTEGER NOT NULL REFERENCES blacklist(vk_user_id)')
+                                               '       blk_id INTEGER NOT NULL')
 
         # Подключение бота к сообществу в VK
         vk_enter = vk_api.VkApi(token=vk_api_token)
@@ -89,6 +88,8 @@ if __name__ == '__main__':
         keyboard2.add_button('Следующий', color=VkKeyboardColor.PRIMARY)
         keyboard2.add_line()
         keyboard2.add_button('В избранное', color=VkKeyboardColor.SECONDARY)
+        keyboard2.add_button('В черный список', color=VkKeyboardColor.SECONDARY)
+        keyboard2.add_line()
         keyboard2.add_button('Показать избранное', color=VkKeyboardColor.SECONDARY)
 
         # Переменные для временного хранения результатов работы бота
@@ -103,9 +104,11 @@ if __name__ == '__main__':
         for event in longpoll.listen():
             if user_info is not None:
                 try:
-                    vk_db.new_vk_user(user_info['id'],
-                                      int(date.today().year - int(user_info['bdate'][-4:])), user_info['sex'],
-                                      user_info['city']['id'])
+                    try:
+                        years_of_user = int(date.today().year - int(user_info['bdate'][-4:]))
+                    except:
+                        years_of_user = VK_data.average_friends_age(user_info['id'])
+                    vk_db.new_vk_user(user_info['id'], years_of_user, user_info['sex'], user_info['city']['id'])
                 except err.UniqueViolation:
                     pass
 
@@ -133,9 +136,12 @@ if __name__ == '__main__':
                     elif request in ("пока", 'нет', 'Нет'):
                         write_msg(event.user_id, "Пока((")
                         break
+
+                    # Команда "Поиск"
                     elif request in ("Поиск", 'да'):
                         write_msg(event.user_id, 'Уже ищу. Дайте мне несколько секунд.', keyboard2.get_keyboard())
-                        result_search = VK_data(token_program).get_suitable(event.user_id)
+                        result_search_without_blklist_cleaning = VK_data(token_program).get_suitable(event.user_id)
+                        result_search = VK_data(token_program).blacklist_cleaner(result_search_without_blklist_cleaning, vk_db.get_user_blacklist(event.user_id))
                         write_msg(event.user_id,
                                   f"{user_info['first_name']}, я нашел для вас {len(result_search)}"
                                   f" кандидат{'ок' if user_info['sex'] == 2 else 'ов'}\n"
@@ -170,6 +176,19 @@ if __name__ == '__main__':
                             except err.UniqueViolation:
                                 pass
                             write_msg(event.user_id, "Добавлено!", keyboard2.get_keyboard())
+                        except TypeError:
+                            write_msg(event.user_id, 'Сначала нужно выбрать человека. Нажмите "Поиск"',
+                                      keyboard2.get_keyboard())
+
+                    # Команда "Добавить в черный список"
+                    elif request == "В черный список":
+                        try:
+                            try:
+                                vk_db.user_blacklist(event.user_id, result_user[2])
+                                result_search.remove(result_user)
+                            except err.UniqueViolation:
+                                pass
+                            write_msg(event.user_id, "Добавлено в черный список.", keyboard2.get_keyboard())
                         except TypeError:
                             write_msg(event.user_id, 'Сначала нужно выбрать человека. Нажмите "Поиск"',
                                       keyboard2.get_keyboard())
