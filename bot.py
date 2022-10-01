@@ -69,6 +69,10 @@ if __name__ == '__main__':
         vk_db.table_creation('user_favorites', '           id SERIAL PRIMARY KEY, '
                                                'user_id_in_vk INTEGER NOT NULL REFERENCES vk_user(user_id_in_vk), '
                                                '       fav_id INTEGER NOT NULL REFERENCES favorites(vk_user_id)')
+        vk_db.table_creation('blacklist', ' vk_user_id INTEGER PRIMARY KEY')
+        vk_db.table_creation('user_blacklist', '           id SERIAL PRIMARY KEY, '
+                                               'user_id_in_vk INTEGER NOT NULL REFERENCES vk_user(user_id_in_vk), '
+                                               '       blk_id INTEGER NOT NULL REFERENCES blacklist(vk_user_id)')
 
         # Подключение бота к сообществу в VK
         vk_enter = vk_api.VkApi(token=vk_api_token)
