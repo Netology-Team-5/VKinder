@@ -42,7 +42,8 @@ if __name__ == '__main__':
             try:
                 token_program = get_code.get_token_vk()
             except exceptions.NoSuchWindowException:
-                exit('Запустите программу заново и введите ключ авторизации корректно: либо в браузере, либо в файле tokens.ini')
+                exit('Запустите программу заново и введите ключ авторизации корректно: '
+                     'либо в браузере, либо в файле tokens.ini')
 
         else:
             token_program = config['TOKEN_SEARCH']['token']
@@ -107,7 +108,7 @@ if __name__ == '__main__':
                     try:
                         years_of_user = int(date.today().year - int(user_info['bdate'][-4:]))
                     except:
-                        years_of_user = VK_data.average_friends_age(user_info['id'])
+                        years_of_user = VK_data(token_program).average_friends_age(user_info['id'])
                     vk_db.new_vk_user(user_info['id'], years_of_user, user_info['sex'], user_info['city']['id'])
                 except err.UniqueViolation:
                     pass
@@ -141,7 +142,8 @@ if __name__ == '__main__':
                     elif request in ("Поиск", 'да'):
                         write_msg(event.user_id, 'Уже ищу. Дайте мне несколько секунд.', keyboard2.get_keyboard())
                         result_search_without_blklist_cleaning = VK_data(token_program).get_suitable(event.user_id)
-                        result_search = VK_data(token_program).blacklist_cleaner(result_search_without_blklist_cleaning, vk_db.get_user_blacklist(event.user_id))
+                        result_search = VK_data(token_program).blacklist_cleaner(
+                            result_search_without_blklist_cleaning, vk_db.get_user_blacklist(event.user_id))
                         write_msg(event.user_id,
                                   f"{user_info['first_name']}, я нашел для вас {len(result_search)}"
                                   f" кандидат{'ок' if user_info['sex'] == 2 else 'ов'}\n"
