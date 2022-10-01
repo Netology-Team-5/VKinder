@@ -56,3 +56,7 @@ new_db = DatabaseConfig(db_name, user_name, user_password)
     # 7. Скрипты, позволяющие удалить запись из таблицы по id
     # new_db.vk_user_removal('vk_user','3')
     # new_db.vk_user_removal('user_favorites', '4')
+
+    # 8. Скрипты, вызывающие blacklist
+    # print(new_db.get_user_blacklist(7451160))
+
