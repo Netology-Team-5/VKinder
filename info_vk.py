@@ -142,6 +142,12 @@ class VK_data:
 
         return user_info
 
+    @classmethod
+    def blacklist_cleaner(cls, results_of_search: list, black_list: list) -> list:
+        """Удаляет из результатов поиска профили из черного списка."""
+        clean_search_list = [user for user in results_of_search if user[2] not in black_list]
+        return clean_search_list
+
 
 if __name__ == '__main__':
     config = configparser.ConfigParser()
