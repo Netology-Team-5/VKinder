@@ -93,6 +93,13 @@ if __name__ == '__main__':
         keyboard2.add_line()
         keyboard2.add_button('Показать избранное', color=VkKeyboardColor.SECONDARY)
 
+        # Клавиатура 3
+        keyboard3 = VkKeyboard(one_time=True)
+        keyboard3.add_button('Поиск', color=VkKeyboardColor.PRIMARY)
+        keyboard3.add_button('Следующий', color=VkKeyboardColor.PRIMARY)
+        keyboard3.add_line()
+        keyboard3.add_button('Очистить избранное', color=VkKeyboardColor.SECONDARY)
+
         # Переменные для временного хранения результатов работы бота
         result_search = None
         result_user = None
@@ -202,19 +209,25 @@ if __name__ == '__main__':
                         if len(list_of_fav) != 0:
                             write_msg(event.user_id,
                                       f'В вашем списке "Избранное" {len(list_of_fav)} человек.\n Вот они:',
-                                      keyboard2.get_keyboard())
+                                      keyboard3.get_keyboard())
                             for fav in list_of_fav:
                                 if count < 10:
-                                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard2.get_keyboard())
-                                    paste_foto(event.user_id, fav[3], keyboard2.get_keyboard())
+                                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard3.get_keyboard())
+                                    paste_foto(event.user_id, fav[3], keyboard3.get_keyboard())
                                     count += 1
                                 else:
                                     time.sleep(1)
-                                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard2.get_keyboard())
-                                    paste_foto(event.user_id, fav[3], keyboard2.get_keyboard())
+                                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard3.get_keyboard())
+                                    paste_foto(event.user_id, fav[3], keyboard3.get_keyboard())
                                     count = 0
                         else:
                             write_msg(event.user_id, f'В вашем списке "Избранное" 0 человек.', keyboard2.get_keyboard())
+
+                    # Команда "Добавить в черный список"
+                    elif request == "Очистить избранное":
+                        vk_db.clear_favorites_table()
+                        write_msg(event.user_id, "Список избранного очищен", keyboard2.get_keyboard())
+
                     else:
                         write_msg(event.user_id, "Не понял вашего запроса... Попробуйте команду на клавиатуре.",
                                   keyboard2.get_keyboard())
