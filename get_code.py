@@ -4,12 +4,24 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.edge.service import Service
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 import re
+import configparser
+
+config = configparser.ConfigParser()
+config.read('vk_credentials.ini')
 
 
 def get_token_vk():
+    options = webdriver.EdgeOptions()
+    options.add_argument('--headless')
     service = Service(executable_path=EdgeChromiumDriverManager().install())
     driver = webdriver.Edge(service=service)
     driver.get("https://oauth.vk.com/authorize?client_id=51432598&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=stats,offline&response_type=token&v=5.131")
+    element = driver.find_element(by='name', value='email')
+    element.send_keys(config['VK']["vk_login"])
+    element = driver.find_element(by='name', value='pass')
+    element.send_keys(config['VK']["vk_password"])
+    element = driver.find_element(by='id', value='install_allow')
+    element.click()
     WebDriverWait(driver, 240).until(ec.url_contains('https://oauth.vk.com/blank.html#access_token='))
     link_of_token = driver.current_url
     driver.close()
