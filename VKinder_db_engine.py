@@ -14,6 +14,7 @@ import psycopg2
 
 class DatabaseConfig:
     """Содержит методы для работы с базой данных PostgreSQL."""
+
     def __init__(self, database: str, user: str, password: str):
         """Получает название базы данных, пользователя базы данных и пароля для подключения."""
         self.database = database
@@ -116,5 +117,14 @@ class DatabaseConfig:
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute(f"""DELETE FROM {table} WHERE id=%s;""", id_user)
+            conn.commit()
+        conn.close()
+
+    def clear_favorites_table(self):
+        """Очищает таблицу избранного."""
+        conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
+        with conn.cursor() as cur:
+            cur.execute(f"""DELETE FROM user_favorites;
+                            DELETE FROM favorites;""")
             conn.commit()
         conn.close()
