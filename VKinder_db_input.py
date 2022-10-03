@@ -12,7 +12,7 @@ user_password = config["Database"]["user_password"]
 
 new_db = DatabaseConfig(db_name, user_name, user_password)
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 
     # 0. Скрипты, удаляющие таблицу БД:
     # new_db.table_removal('user_favorites')
@@ -56,3 +56,12 @@ new_db = DatabaseConfig(db_name, user_name, user_password)
     # 7. Скрипты, позволяющие удалить запись из таблицы по id
     # new_db.vk_user_removal('vk_user','3')
     # new_db.vk_user_removal('user_favorites', '4')
+
+    # 8. Скрипт, позволяющий очистить содержимое избранного
+    new_db.clear_favorites_table()
+
+
+
+    # 8. Скрипты, вызывающие blacklist
+    # print(new_db.get_user_blacklist(7451160))
+

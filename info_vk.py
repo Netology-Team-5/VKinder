@@ -7,7 +7,6 @@
 метод get_photos возвращает фотографии найденного профиля;
 метод get_suitable возвращает информацию о подходящих профилях.
 """
-
 import configparser
 import requests
 from datetime import datetime
@@ -142,6 +141,12 @@ class VK_data:
                 user_info.append((first_name, last_name, user_link))
 
         return user_info
+
+    @classmethod
+    def blacklist_cleaner(cls, results_of_search: list, black_list: list) -> list:
+        """Удаляет из результатов поиска профили из черного списка."""
+        clean_search_list = [user for user in results_of_search if user[2] not in black_list]
+        return clean_search_list
 
 
 if __name__ == '__main__':

@@ -14,6 +14,7 @@ import psycopg2
 
 class DatabaseConfig:
     """Содержит методы для работы с базой данных PostgreSQL."""
+
     def __init__(self, database: str, user: str, password: str):
         """Получает название базы данных, пользователя базы данных и пароля для подключения."""
         self.database = database
@@ -74,6 +75,15 @@ class DatabaseConfig:
             conn.commit()
         conn.close()
 
+    def user_blacklist(self, user_id_in_vk: int, blk_id: int):
+        """Добавляет в user_blacklist новую запись."""
+        conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
+        with conn.cursor() as cur:
+            cur.execute("""INSERT INTO user_blacklist(user_id_in_vk, blk_id) VALUES (%s, %s);""",
+                        (user_id_in_vk, blk_id))
+            conn.commit()
+        conn.close()
+
     def get_fav_users(self, user_id_in_vk: int) -> list:
         """Возвращает список избранных профилей пользователя.
 
@@ -88,10 +98,33 @@ class DatabaseConfig:
             """, (user_id_in_vk,))
             return cur.fetchall()
 
+    def get_user_blacklist(self, user_id_in_vk: int) -> list:
+        """Возвращает список профилей из черного списка пользователя.
+
+        :return список id профилей, находящихся в черном списке.
+        """
+        conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT blk_id FROM user_blacklist
+                WHERE user_id_in_vk = %s;       
+            """, (user_id_in_vk,))
+            result = [item[0] for item in cur.fetchall()]
+            return result
+
     def vk_user_removal(self, table: str, id_user: int):
         """Удаляет запись из таблицы по id пользователя."""
         conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
         with conn.cursor() as cur:
             cur.execute(f"""DELETE FROM {table} WHERE id=%s;""", id_user)
+            conn.commit()
+        conn.close()
+
+    def clear_favorites_table(self):
+        """Очищает таблицу избранного."""
+        conn = psycopg2.connect(database=self.database, user=self.user, password=self.password)
+        with conn.cursor() as cur:
+            cur.execute(f"""DELETE FROM user_favorites;
+                            DELETE FROM favorites;""")
             conn.commit()
         conn.close()
