@@ -25,6 +25,7 @@
 - postgreSQL (14+)
 - psycopg2 (2.9.3+)
 - requests (2.28.1+)
+- selenium (4.4.3+)
 - vk-api (11.9.9+)
 
 ### Документация

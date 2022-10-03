@@ -8,6 +8,7 @@
 метод favorites добавляет в таблицу favorites новую запись;
 метод get_fav_users возвращает список избранных профилей пользователя;
 метод vk_user_removal удаляет запись по id пользователя;
+метод clear_favorites_table очищает таблицу избранного.
 """
 import psycopg2
 
