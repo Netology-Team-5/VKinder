@@ -79,6 +79,8 @@ if __name__ == '__main__':
         vk = vk_enter.get_api()
         longpoll = VkLongPoll(vk_enter)
 
+        vk_data = VK_data(token_program)
+
         # Клавиатура 1
         keyboard1 = VkKeyboard(one_time=True)
         keyboard1.add_button('Поиск', color=VkKeyboardColor.PRIMARY)
@@ -92,13 +94,7 @@ if __name__ == '__main__':
         keyboard2.add_button('В черный список', color=VkKeyboardColor.SECONDARY)
         keyboard2.add_line()
         keyboard2.add_button('Показать избранное', color=VkKeyboardColor.SECONDARY)
-
-        # Клавиатура 3
-        keyboard3 = VkKeyboard(one_time=True)
-        keyboard3.add_button('Поиск', color=VkKeyboardColor.PRIMARY)
-        keyboard3.add_button('Следующий', color=VkKeyboardColor.PRIMARY)
-        keyboard3.add_line()
-        keyboard3.add_button('Очистить избранное', color=VkKeyboardColor.SECONDARY)
+        keyboard2.add_button('Очистить избранное', color=VkKeyboardColor.NEGATIVE)
 
         # Переменные для временного хранения результатов работы бота
         result_search = None
@@ -114,15 +110,15 @@ if __name__ == '__main__':
                 try:
                     try:
                         years_of_user = int(date.today().year - int(user_info['bdate'][-4:]))
-                    except:
-                        years_of_user = VK_data(token_program).average_friends_age(user_info['id'])
+                    except ValueError:
+                        years_of_user = vk_data.average_friends_age(user_info['id'])
                     vk_db.new_vk_user(user_info['id'], years_of_user, user_info['sex'], user_info['city']['id'])
                 except err.UniqueViolation:
                     pass
 
             if event.type == VkEventType.MESSAGE_NEW:
                 if user_info is None:
-                    user_info = VK_data(token_program).get_user_data_only(event.user_id)
+                    user_info = vk_data.get_user_data_only(event.user_id)
                 if event.to_me:
                     request = event.text
 
@@ -148,15 +144,15 @@ if __name__ == '__main__':
                     # Команда "Поиск"
                     elif request in ("Поиск", 'да'):
                         write_msg(event.user_id, 'Уже ищу. Дайте мне несколько секунд.', keyboard2.get_keyboard())
-                        result_search_without_blklist_cleaning = VK_data(token_program).get_suitable(event.user_id)
-                        result_search = VK_data(token_program).blacklist_cleaner(
+                        result_search_without_blklist_cleaning = vk_data.get_suitable(event.user_id)
+                        result_search = vk_data.blacklist_cleaner(
                             result_search_without_blklist_cleaning, vk_db.get_user_blacklist(event.user_id))
                         write_msg(event.user_id,
                                   f"{user_info['first_name']}, я нашел для вас {len(result_search)}"
                                   f" кандидат{'ок' if user_info['sex'] == 2 else 'ов'}\n"
                                   f"Вот од{'на' if user_info['sex'] == 2 else 'ин'} из них:", keyboard2.get_keyboard())
                         result_user = result_search[randrange(0, len(result_search))]
-                        photos = ','.join(VK_data(token_program).get_photos(result_user[2]))
+                        photos = ','.join(vk_data.get_photos(result_user[2]))
                         write_msg(event.user_id,
                                   f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}',
                                   keyboard2.get_keyboard())
@@ -169,7 +165,7 @@ if __name__ == '__main__':
                             write_msg(event.user_id,
                                       f'{result_user[0]} {result_user[1]}\nhttps://vk.com/id{result_user[2]}',
                                       keyboard2.get_keyboard())
-                            photos = ','.join(VK_data(token_program).get_photos(result_user[2]))
+                            photos = ','.join(vk_data.get_photos(result_user[2]))
                             paste_foto(event.user_id, photos, keyboard2.get_keyboard())
                         except TypeError:
                             write_msg(event.user_id, 'Чтобы выбирать следующего, сначала нажмите "Поиск"',
@@ -209,16 +205,16 @@ if __name__ == '__main__':
                         if len(list_of_fav) != 0:
                             write_msg(event.user_id,
                                       f'В вашем списке "Избранное" {len(list_of_fav)} человек.\n Вот они:',
-                                      keyboard3.get_keyboard())
+                                      keyboard2.get_keyboard())
                             for fav in list_of_fav:
                                 if count < 10:
-                                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard3.get_keyboard())
-                                    paste_foto(event.user_id, fav[3], keyboard3.get_keyboard())
+                                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard2.get_keyboard())
+                                    paste_foto(event.user_id, fav[3], keyboard2.get_keyboard())
                                     count += 1
                                 else:
                                     time.sleep(1)
-                                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard3.get_keyboard())
-                                    paste_foto(event.user_id, fav[3], keyboard3.get_keyboard())
+                                    write_msg(event.user_id, f'{fav[0]} {fav[1]}\n{fav[2]}', keyboard2.get_keyboard())
+                                    paste_foto(event.user_id, fav[3], keyboard2.get_keyboard())
                                     count = 0
                         else:
                             write_msg(event.user_id, f'В вашем списке "Избранное" 0 человек.', keyboard2.get_keyboard())
@@ -226,7 +222,7 @@ if __name__ == '__main__':
                     # Команда "Добавить в черный список"
                     elif request == "Очистить избранное":
                         vk_db.clear_favorites_table()
-                        write_msg(event.user_id, "Список избранного очищен", keyboard2.get_keyboard())
+                        write_msg(event.user_id, "Список избранного очищен.", keyboard2.get_keyboard())
 
                     else:
                         write_msg(event.user_id, "Не понял вашего запроса... Попробуйте команду на клавиатуре.",
