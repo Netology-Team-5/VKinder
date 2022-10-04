@@ -31,6 +31,9 @@ def paste_foto(user_id: int, attachment: str, *keyboard):
 
 
 if __name__ == '__main__':
+    # Создание БД
+    conn_info = DatabaseConfig.load_connection_info("base_settings.ini")
+    DatabaseConfig.create_db(conn_info)
     try:
         config = configparser.ConfigParser()
 

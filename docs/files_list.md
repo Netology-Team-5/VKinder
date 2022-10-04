@@ -21,6 +21,8 @@
 
 3. [VKinder_db_engine.py](https://github.com/Netology-Team-5/VKinder/blob/main/VKinder_db_engine.py)
 Класс с функциями для работы с базой данных:
+   - `load_connection_info` - функция, создающая словарь параметров для СУБД;
+   - `create_db` - функция, подключается к СУБД и создаёт БД;
    - `table_creation` - функция, создающая таблицы БД;
    - `table_removal` - функция, удаляющая таблицы БД;
    - `new_vk_user` - функция, позволяющая добавить нового юзера;
@@ -30,15 +32,15 @@
    - `get_fav_users` - функция, выводит список избранных людей юзера; 
    - `vk_user_removal` - функция, позволяющая удалить запись из таблицы по id; 
 
-4. [get_code.py](https://github.com/Netology-Team-5/VKinder/blob/main/get_code.py)
+5. [get_code.py](https://github.com/Netology-Team-5/VKinder/blob/main/get_code.py)
 Модуль запроса токена, в случае его отсутствия у пользователя.
    - `get_token_vk` - функция запускает драйвер браузера для получения кода и сохраняет его в переменную. 
 
-5. [tokens.ini](https://github.com/Netology-Team-5/VKinder/blob/main/tokens.ini)
+6. [tokens.ini](https://github.com/Netology-Team-5/VKinder/blob/main/tokens.ini)
 Токены для работы с API vk
 
-6. [base_settings.ini](https://github.com/Netology-Team-5/VKinder/blob/main/base_settings.ini)
+7. [base_settings.ini](https://github.com/Netology-Team-5/VKinder/blob/main/base_settings.ini)
 Ключи для работы с базой данных
 
-7. [VKinder_db_v1.png](https://github.com/Netology-Team-5/VKinder/blob/main/VKinder_db_v1.png)
+8. [VKinder_db_v1.png](https://github.com/Netology-Team-5/VKinder/blob/main/VKinder_db_v1.png)
 Схема базы данных 

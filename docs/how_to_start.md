@@ -6,22 +6,16 @@
 
 1. Установить PostgreSQL. 
 
-2. Установить базу данных через терминал командой:
-   ```
-   createbd -U логин имя_бд
-   По умочанию логин:postgres, имя_бд: VKinder
-   createbd -U postgres VKinder
-   ```
-3. В файле [base_settings.ini](https://github.com/Netology-Team-5/VKinder/blob/main/base_settings.ini) прописать:
+2. В файле [base_settings.ini](https://github.com/Netology-Team-5/VKinder/blob/main/base_settings.ini) прописать:
    - Имя бд к `db_name`(по умолчанию `= VKinder`);
    - Логин postgres к `user_name`(по умолчание `postgres`);
    - Пароль postgres к `user_password`.
 
-4. Запустить [бота](https://github.com/Netology-Team-5/VKinder/blob/main/bot.py).
+3. Запустить [бота](https://github.com/Netology-Team-5/VKinder/blob/main/bot.py).
 
-5. В открывшемся окне браузера Firefox авторизоваться на сайте vk.com с помощью логина и пароля и дать разрешение программе VKinder_Test_Group5. Эта процедура необходима для получения личного токена для работы с программой.
-6. В открывшемся чате в окне браузера по умолчанию написать сообщение "Привет". 
-7. Нажать на кнопку Поиск. 
+4. В открывшемся окне браузера Firefox авторизоваться на сайте vk.com с помощью логина и пароля и дать разрешение программе VKinder_Test_Group5. Эта процедура необходима для получения личного токена для работы с программой.
+5. В открывшемся чате в окне браузера по умолчанию написать сообщение "Привет". 
+6. Нажать на кнопку Поиск. 
    - Бот выведет на экран подходящего под критерии поиска человека. 
 
 Кнопки:

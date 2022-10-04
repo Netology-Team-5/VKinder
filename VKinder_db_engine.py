@@ -1,6 +1,8 @@
 """Модуль работы с базой данных PostgreSQL.
 
-класс DatabaseConfig содержит методы для работы c базой данных;
+класс DatabaseConfig содержит методы для для создания и работы c базой данных;
+метод load_connection_info создает словарь параметров СУБД;
+метод create_db подключает к СУБД и создание новой базы данных;
 метод table_creation создает таблицы;
 метод table_removal удаляет таблицы;
 метод new_vk_user добавляет нового пользователя в таблицу;
@@ -10,6 +12,8 @@
 метод vk_user_removal удаляет запись по id пользователя;
 """
 import psycopg2
+from configparser import ConfigParser
+from typing import Dict
 
 
 class DatabaseConfig:
@@ -20,6 +24,33 @@ class DatabaseConfig:
         self.database = database
         self.user = user
         self.password = password
+
+    @staticmethod
+    def load_connection_info(ini_filename: str) -> Dict[str, str]:
+        """Создание словаря параметров СУБД из файла .ini"""
+
+        parser = ConfigParser()
+        parser.read(ini_filename)
+        con_info = {param[0]: param[1] for param in parser.items("Database")}
+        return con_info
+
+    @staticmethod
+    def create_db(con_info: Dict[str, str], ) -> None:
+        """Подключение к СУБД и создание новой базы данных"""
+
+        psql_connection_string = f"user={con_info['user_name']} password={con_info['user_password']}"
+        conn = psycopg2.connect(psql_connection_string)
+        cur = conn.cursor()
+        conn.autocommit = True
+        sql_query = f"CREATE DATABASE {con_info['db_name']}"
+        try:
+            cur.execute(sql_query)
+        except Exception as e:
+            print(f"{type(e).__name__}: {e}")
+            print(f"Query: {cur.query}")
+            cur.close()
+        else:
+            conn.autocommit = False
 
     def table_creation(self, table_name: str, table_columns: str):
         """Создает таблицы в базе данных."""
